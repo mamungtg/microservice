@@ -23,14 +23,15 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // --- Contact / repair-request form ------------------------------------
-  // The form posts for real to FormSubmit.co (see the form's action= in
-  // build.py). We only intercept the submit to run a client-side check
-  // (emails must match) — if that check passes, the browser submits the
-  // form normally and FormSubmit redirects to contact-thanks.html once it's
-  // delivered. Note: the very first submission ever sent to a brand-new
-  // destination email goes to FormSubmit's own "confirm this address" page
-  // instead of being delivered — that's a one-time step for the site owner,
-  // not something repeat visitors will see.
+  // The form posts for real to our own mail-relay Worker (see the form's
+  // action= in build.py / ms-mail-worker/), which logs into the Zoho
+  // mailbox over SMTP and sends the message on so it arrives
+  // From: mominul@mspointbd.com. We intercept the submit only to run a
+  // client-side check (emails must match) as a fast fail before the round
+  // trip; the same check also happens server-side in the Worker. On
+  // success the Worker redirects to contact-thanks.html; on a validation
+  // or delivery problem it redirects back here with ?error=... , which we
+  // pick up below and show inline.
   var form = document.getElementById('repair-form');
   if (form) {
     form.addEventListener('submit', function (e) {
@@ -40,8 +41,19 @@ document.addEventListener('DOMContentLoaded', function () {
         e.preventDefault();
         showFormMessage(form, 'Your email addresses don’t match — please check and try again.', true);
       }
-      // Otherwise: let the native form submission proceed to FormSubmit.co.
+      // Otherwise: let the native form submission proceed to the Worker.
     });
+
+    // Surface a server-side error (bad input, or the mail relay failed)
+    // that the Worker passed back via ?error=... on its redirect here.
+    var params = new URLSearchParams(window.location.search);
+    var serverError = params.get('error');
+    if (serverError) {
+      showFormMessage(form, serverError, true);
+      params.delete('error');
+      var cleanUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '') + window.location.hash;
+      window.history.replaceState({}, document.title, cleanUrl);
+    }
   }
 
   function showFormMessage(form, text, isError) {

@@ -47,10 +47,10 @@
 
 <section class="section">
   <div class="container" style="max-width:760px;">
-    <form class="support-form" id="repair-form" action="https://formsubmit.co/mominul@mspointbd.com" method="post" enctype="multipart/form-data">
-      <input type="hidden" name="_subject" value="New Website Repair Request — Micro Service">
-      <input type="hidden" name="_template" value="table">
-      <input type="hidden" name="_next" value="contact-thanks.html">
+    <form class="support-form" id="repair-form" action="https://mspointbd-mail-relay.YOUR-SUBDOMAIN.workers.dev/" method="post" enctype="multipart/form-data">
+      <!-- Honeypot: real visitors never see or fill this in (hidden via CSS).
+           The mail-relay Worker treats any submission with this field
+           non-empty as a bot and silently drops it. -->
       <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
       <div class="form-row">
         <div class="form-group">

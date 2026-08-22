@@ -20,10 +20,17 @@ FIVERR_URL = "https://www.fiverr.com/"  # placeholder — replace with your exac
 LINKEDIN_URL = "https://www.linkedin.com/in/mdmhoque/"
 FACEBOOK_URL = "https://www.facebook.com/mamungtg/"
 EMAIL_DISPLAY = "support@mspointbd.com"  # placeholder — update with real inbox
-# Real inbox the contact-form backend (FormSubmit.co) delivers submissions to.
+# Real inbox the contact form delivers submissions to.
 # Kept separate from EMAIL_DISPLAY since it doesn't need to be shown publicly.
 FORM_TARGET_EMAIL = "mominul@mspointbd.com"
-FORM_ENDPOINT = f"https://formsubmit.co/{FORM_TARGET_EMAIL}"
+# The contact form now posts to your own mail-relay Worker (see the
+# ms-mail-worker/ folder) instead of FormSubmit — that Worker logs into your
+# Zoho mailbox over SMTP, so submissions arrive From: mominul@mspointbd.com
+# instead of FormSubmit's own address. Deploy that Worker first (see its
+# DEPLOY.md), then replace this URL with the *.workers.dev URL it prints
+# (or your own custom domain/route once you've set one up) and re-run
+# `python3 build.py`.
+FORM_ENDPOINT = "https://mspointbd-mail-relay.YOUR-SUBDOMAIN.workers.dev/"
 
 # Default trust badges shown under every service hero — override per page if needed.
 DEFAULT_TRUST_BADGES = ["After-Sales Support", "Experienced Team", "Fair Pricing", "Fast Turnaround"]
@@ -1408,9 +1415,9 @@ contact_body = f"""
 <section class="section">
   <div class="container" style="max-width:760px;">
     <form class="support-form" id="repair-form" action="{FORM_ENDPOINT}" method="post" enctype="multipart/form-data">
-      <input type="hidden" name="_subject" value="New Website Repair Request — {SITE_NAME}">
-      <input type="hidden" name="_template" value="table">
-      <input type="hidden" name="_next" value="{{ROOT}}contact-thanks.html">
+      <!-- Honeypot: real visitors never see or fill this in (hidden via CSS).
+           The mail-relay Worker treats any submission with this field
+           non-empty as a bot and silently drops it. -->
       <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
       <div class="form-row">
         <div class="form-group">
