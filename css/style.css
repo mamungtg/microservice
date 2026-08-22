@@ -832,44 +832,7 @@ ul { margin: 0; padding: 0; list-style: none; }
 .legal-content li { margin-bottom: 0.5em; }
 .legal-content a { color: var(--color-primary); text-decoration: underline; }
 
-/* Site-wide lead popup — appears once per visitor, links straight to the
-   contact form. Docked bottom-left (float-widgets occupy bottom-right) as a
-   non-blocking corner card rather than a full-screen modal. Hidden by
-   default; JS in main.js reveals it via .is-open. */
-.site-popup-overlay {
-  display: none;
-  position: fixed;
-  left: 18px;
-  bottom: 18px;
-  z-index: 500;
-  max-width: 340px;
-  width: calc(100% - 36px);
-}
-.site-popup-overlay.is-open { display: block; }
-.site-popup {
-  position: relative;
-  background: #fff;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
-  width: 100%;
-  padding: 16px 18px 16px;
-  text-align: left;
-  animation: popupIn 0.2s ease;
-}
-@keyframes popupIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-@media (max-width: 600px) {
-  .site-popup-overlay { left: 10px; bottom: 10px; max-width: 300px; width: calc(100% - 20px); }
-  .site-popup { padding: 14px 14px 12px; }
-  .site-popup p { margin-bottom: 10px; }
-  .site-popup .site-popup-fine { display: none; }
-}
-
-/* Small persistent corner button that reopens CookieYes preferences.
-   Shares the bottom-left corner with the lead popup above, so JS toggles
-   .is-hidden on it while that popup is open. */
+/* Small persistent corner button that reopens CookieYes preferences. */
 .cookie-revisit-btn {
   position: fixed;
   left: 18px;
@@ -890,31 +853,6 @@ ul { margin: 0; padding: 0; list-style: none; }
   transition: transform 0.15s ease, background 0.15s ease;
 }
 .cookie-revisit-btn:hover { background: var(--color-primary-dark); transform: translateY(-2px); }
-.cookie-revisit-btn.is-hidden { display: none; }
 @media (max-width: 600px) {
   .cookie-revisit-btn { left: 10px; bottom: 10px; width: 40px; height: 40px; font-size: 1.15rem; }
 }
-.site-popup-close {
-  position: absolute;
-  top: 12px;
-  right: 14px;
-  background: none;
-  border: none;
-  font-size: 1.3rem;
-  line-height: 1;
-  color: var(--color-body);
-  cursor: pointer;
-  padding: 4px;
-}
-.site-popup-close:hover { color: var(--color-ink); }
-.site-popup h3 {
-  font-size: 1rem;
-  margin: 0 26px 6px 0;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.site-popup h3 .site-popup-icon { font-size: 1.2rem; }
-.site-popup p { color: var(--color-body); margin-bottom: 12px; font-size: 0.85rem; line-height: 1.45; }
-.site-popup .btn { width: 100%; padding: 10px 18px; font-size: 0.88rem; }
-.site-popup .site-popup-fine { margin: 6px 0 0; font-size: 0.72rem; color: #9aa7b3; }

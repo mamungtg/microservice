@@ -17,6 +17,8 @@ PHONE_TEL = "+8801722458581"
 WHATSAPP_NUMBER = "8801722458581"
 WHATSAPP_LINK = f"https://wa.me/{WHATSAPP_NUMBER}"
 FIVERR_URL = "https://www.fiverr.com/"  # placeholder — replace with your exact Fiverr profile URL
+LINKEDIN_URL = "https://www.linkedin.com/in/mdmhoque/"
+FACEBOOK_URL = "https://www.facebook.com/mamungtg/"
 EMAIL_DISPLAY = "support@mspointbd.com"  # placeholder — update with real inbox
 # Real inbox the contact-form backend (FormSubmit.co) delivers submissions to.
 # Kept separate from EMAIL_DISPLAY since it doesn't need to be shown publicly.
@@ -207,9 +209,9 @@ def render_footer():
         </div>
         <h4 style="margin-top:22px;">Social Links</h4>
         <div class="social-links">
-          <a href="#" aria-label="Facebook">{SOCIAL_ICONS['facebook']}</a>
+          <a href="{FACEBOOK_URL}" target="_blank" rel="noopener" aria-label="Facebook">{SOCIAL_ICONS['facebook']}</a>
           <a href="#" aria-label="Instagram">{SOCIAL_ICONS['instagram']}</a>
-          <a href="#" aria-label="LinkedIn">{SOCIAL_ICONS['linkedin']}</a>
+          <a href="{LINKEDIN_URL}" target="_blank" rel="noopener" aria-label="LinkedIn">{SOCIAL_ICONS['linkedin']}</a>
           <a href="#" aria-label="X">{SOCIAL_ICONS['x']}</a>
           <a href="#" aria-label="YouTube">{SOCIAL_ICONS['youtube']}</a>
           <a href="{WHATSAPP_LINK}" target="_blank" rel="noopener" aria-label="WhatsApp">{SOCIAL_ICONS['whatsapp']}</a>
@@ -235,20 +237,9 @@ def render_footer():
     <span class="float-icon whatsapp">{SOCIAL_ICONS['whatsapp']}</span>
   </a>
 </div>
-<div class="site-popup-overlay" id="site-popup-overlay">
-  <div class="site-popup" role="complementary" aria-labelledby="site-popup-heading">
-    <button type="button" class="site-popup-close" id="site-popup-close" aria-label="Close">✕</button>
-    <h3 id="site-popup-heading"><span class="site-popup-icon">\U0001F6E0️</span> Free Website Health Check?</h3>
-    <p>Quick look at speed, security, and stability — no cost, no obligation.</p>
-    <a href="{{ROOT}}contact.html" class="btn btn-primary">Yes Please!</a>
-    <p class="site-popup-fine">We'll only use this to follow up on your request.</p>
-  </div>
-</div>
 <!-- CookieYes "revisit consent" trigger — the cky-banner-element class is
      CookieYes's documented hook: their script binds a click handler to any
-     element with this class to reopen the preferences panel. Hidden while
-     the lead popup above is open so the two don't visually collide, since
-     both rest in the same bottom-left corner. -->
+     element with this class to reopen the preferences panel. -->
 <button type="button" class="cky-banner-element cookie-revisit-btn" id="cookie-revisit-btn" aria-label="Cookie Settings" title="Cookie Settings">\U0001F36A</button>
 <script src="{{ROOT}}js/main.js" defer></script>
 </body>

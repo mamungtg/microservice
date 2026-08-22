@@ -44,62 +44,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // --- Lead popup ---------------------------------------------------------
-  // Shows once per visitor (tracked via localStorage), on any page except
-  // the contact form itself. It's docked bottom-left, and on short/mobile
-  // viewports a blind timer can land it right on top of the hero's CTA
-  // buttons — so it triggers on whichever happens first: the visitor
-  // scrolling down a bit (meaning the hero has scrolled out of the way) or
-  // an 8s fallback timer for anyone who lands and doesn't scroll at all.
-  var popupOverlay = document.getElementById('site-popup-overlay');
-  var popupClose = document.getElementById('site-popup-close');
-  // The CookieYes "reopen preferences" button shares the bottom-left corner
-  // with the lead popup, so it hides whenever that popup is open.
-  var cookieBtn = document.getElementById('cookie-revisit-btn');
-  function syncCookieBtn() {
-    if (!cookieBtn) return;
-    var popupIsOpen = popupOverlay && popupOverlay.classList.contains('is-open');
-    cookieBtn.classList.toggle('is-hidden', !!popupIsOpen);
-  }
-  syncCookieBtn();
-
-  if (popupOverlay && popupClose) {
-    var onContactPage = window.location.pathname.indexOf('contact') !== -1;
-    var alreadySeen = true;
-    try {
-      alreadySeen = window.localStorage.getItem('msPopupSeen') === '1';
-    } catch (err) {
-      // localStorage unavailable (privacy mode, etc.) — just skip the popup.
-      alreadySeen = true;
-    }
-
-    if (!onContactPage && !alreadySeen) {
-      var popupShown = false;
-      var showPopup = function () {
-        if (popupShown) return;
-        popupShown = true;
-        popupOverlay.classList.add('is-open');
-        try { window.localStorage.setItem('msPopupSeen', '1'); } catch (err) { /* ignore */ }
-        window.removeEventListener('scroll', onScroll);
-        syncCookieBtn();
-      };
-      var onScroll = function () {
-        if (window.scrollY > 300) showPopup();
-      };
-      window.addEventListener('scroll', onScroll, { passive: true });
-      window.setTimeout(showPopup, 8000);
-    }
-
-    function closePopup() {
-      popupOverlay.classList.remove('is-open');
-      syncCookieBtn();
-    }
-    popupClose.addEventListener('click', closePopup);
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') closePopup();
-    });
-  }
-
   function showFormMessage(form, text, isError) {
     var existing = form.querySelector('.form-submit-message');
     if (existing) existing.remove();
