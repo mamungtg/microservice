@@ -35,6 +35,11 @@ html { scroll-behavior: smooth; }
 
 body {
   margin: 0;
+  /* Safety net: if any element (an icon row, a wide table, a stray badge)
+     ever forces itself wider than the viewport on a narrow phone, clip the
+     horizontal scroll here instead of letting the whole page shift/scroll
+     sideways. Doesn't affect the sticky header (that's overflow-y-based). */
+  overflow-x: hidden;
   font-family: var(--font-base);
   color: var(--color-body);
   background: var(--color-white);
@@ -640,7 +645,7 @@ ul { margin: 0; padding: 0; list-style: none; }
 .pay-badge--pp { background: #fff; font-style: normal; padding: 0 9px; }
 .pay-badge--pp .pp-pay { color: #003087; font-weight: 800; }
 .pay-badge--pp .pp-pal { color: #009cde; font-weight: 800; }
-.social-links { display: flex; gap: 10px; margin-top: 14px; }
+.social-links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
 .social-links a {
   width: 34px; height: 34px;
   border-radius: 50%;
@@ -739,6 +744,19 @@ ul { margin: 0; padding: 0; list-style: none; }
   .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr 1fr; }
   .plan-card.popular { transform: none; }
+}
+/* On very narrow phones (~360-400px and below), the logo + "Get Free Quote"
+   button + hamburger no longer fit on one line even with the phone/currency
+   items already hidden above — the row overflows the viewport and forces
+   horizontal scroll on the whole page. Shrink the header's own side padding
+   and the CTA button so everything stays on one row. */
+@media (max-width: 480px) {
+  .site-header .container { padding: 0 16px; }
+  .nav-bar { gap: 10px; }
+  .logo { font-size: 1.05rem; }
+  .nav-cta { gap: 8px; }
+  .nav-cta .btn { padding: 9px 14px; font-size: 0.82rem; }
+  .nav-toggle { width: 36px; height: 36px; }
 }
 
 /* Floating contact widgets (Fiverr + WhatsApp) */
