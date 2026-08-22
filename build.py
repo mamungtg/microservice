@@ -30,7 +30,7 @@ FORM_TARGET_EMAIL = "mominul@mspointbd.com"
 # DEPLOY.md), then replace this URL with the *.workers.dev URL it prints
 # (or your own custom domain/route once you've set one up) and re-run
 # `python3 build.py`.
-FORM_ENDPOINT = "https://mspointbd-mail-relay.YOUR-SUBDOMAIN.workers.dev/"
+FORM_ENDPOINT = "https://mspointbd-mail-relay.hoque-mdmominul.workers.dev/"
 
 # Default trust badges shown under every service hero — override per page if needed.
 DEFAULT_TRUST_BADGES = ["After-Sales Support", "Experienced Team", "Fair Pricing", "Fast Turnaround"]
