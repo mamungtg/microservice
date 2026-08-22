@@ -41,6 +41,19 @@ SOCIAL_ICONS = {
     "fiverr": '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M14.5 2C11 2 9 4.2 9 7.6V8H6v3h3v9h3v-9h3.5V8H12v-.4C12 6 12.8 5 14.6 5c.5 0 1 .1 1.4.2V2.2C15.6 2.1 15 2 14.5 2zM4 8v12h3V8H4zm14.5 0a1.75 1.75 0 1 0 0-3.5 1.75 1.75 0 0 0 0 3.5zM17 20h3V8h-3v12z"/></svg>',
 }
 
+# Flag icons for the currency menu — deliberately NOT emoji flags (🇺🇸 etc.).
+# Windows browsers (Chrome/Edge) don't render colored flag-emoji glyphs; they
+# fall back to showing the raw two-letter region code as plain text ("us",
+# "GB"...), which is exactly the bug this replaces. Small inline SVGs render
+# identically everywhere, same reasoning as SOCIAL_ICONS above.
+FLAG_ICONS = {
+    "US": '<svg viewBox="0 0 20 14" width="18" height="13"><rect width="20" height="14" fill="#fff"/><g fill="#B22234"><rect width="20" height="1.08"/><rect width="20" height="1.08" y="2.15"/><rect width="20" height="1.08" y="4.3"/><rect width="20" height="1.08" y="6.46"/><rect width="20" height="1.08" y="8.6"/><rect width="20" height="1.08" y="10.75"/><rect width="20" height="1.08" y="12.9"/></g><rect width="8" height="7.5" fill="#3C3B6E"/></svg>',
+    "EU": '<svg viewBox="0 0 20 14" width="18" height="13"><rect width="20" height="14" fill="#003399"/><g fill="#FFCC00"><circle cx="10" cy="3" r="0.7"/><circle cx="13" cy="4" r="0.7"/><circle cx="14.3" cy="7" r="0.7"/><circle cx="13" cy="10" r="0.7"/><circle cx="10" cy="11" r="0.7"/><circle cx="7" cy="10" r="0.7"/><circle cx="5.7" cy="7" r="0.7"/><circle cx="7" cy="4" r="0.7"/></g></svg>',
+    "GB": '<svg viewBox="0 0 20 14" width="18" height="13"><rect width="20" height="14" fill="#00247D"/><g stroke="#fff" stroke-width="2.4"><line x1="0" y1="0" x2="20" y2="14"/><line x1="20" y1="0" x2="0" y2="14"/></g><g stroke="#CF142B" stroke-width="1.2"><line x1="0" y1="0" x2="20" y2="14"/><line x1="20" y1="0" x2="0" y2="14"/></g><rect x="8" width="4" height="14" fill="#fff"/><rect y="5" width="20" height="4" fill="#fff"/><rect x="8.8" width="2.4" height="14" fill="#CF142B"/><rect y="5.8" width="20" height="2.4" fill="#CF142B"/></svg>',
+    "CA": '<svg viewBox="0 0 20 14" width="18" height="13"><rect width="20" height="14" fill="#fff"/><rect width="5" height="14" fill="#D80621"/><rect x="15" width="5" height="14" fill="#D80621"/><path d="M10 3 L10.8 5 L12.5 4.3 L11.8 6 L13.5 6.5 L11.8 7.3 L12.3 9 L10.5 8.2 L10 10 L9.5 8.2 L7.7 9 L8.2 7.3 L6.5 6.5 L8.2 6 L7.5 4.3 L9.2 5 Z" fill="#D80621"/></svg>',
+    "AU": '<svg viewBox="0 0 20 14" width="18" height="13"><rect width="20" height="14" fill="#00247D"/><g stroke="#fff" stroke-width="1"><line x1="0" y1="0" x2="10" y2="7"/><line x1="10" y1="0" x2="0" y2="7"/></g><rect x="4" width="2" height="7" fill="#fff"/><rect y="3" width="10" height="1" fill="#fff"/><rect x="4.4" width="1.2" height="7" fill="#CF142B"/><rect y="3.3" width="10" height="0.4" fill="#CF142B"/><g fill="#fff"><circle cx="15" cy="3" r="0.6"/><circle cx="17" cy="6" r="0.6"/><circle cx="14.5" cy="9" r="0.6"/><circle cx="17.5" cy="10.5" r="0.6"/><circle cx="12.5" cy="6.5" r="0.5"/></g></svg>',
+}
+
 PAYMENT_BADGES_HTML = """
 <span class="pay-badge pay-badge--ssl" aria-label="SSL Secured">
   <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
@@ -129,12 +142,12 @@ def render_header(active_href):
     <div class="nav-cta">
       <a href="tel:{PHONE_TEL}" class="phone-link">\U0001F4DE {PHONE_DISPLAY}</a>
       <div class="has-dropdown currency-menu">
-        <a href="{{ROOT}}contact.html" class="currency-toggle" aria-haspopup="true">\U0001F1FA\U0001F1F8 USD <span class="chevron">▾</span></a>
+        <a href="{{ROOT}}contact.html" class="currency-toggle" aria-haspopup="true">{FLAG_ICONS['US']} USD <span class="chevron">▾</span></a>
         <div class="dropdown currency-dropdown">
-          <a href="{{ROOT}}contact.html">\U0001F1EA\U0001F1FA EUR</a>
-          <a href="{{ROOT}}contact.html">\U0001F1EC\U0001F1E7 GBP</a>
-          <a href="{{ROOT}}contact.html">\U0001F1E8\U0001F1E6 CAD</a>
-          <a href="{{ROOT}}contact.html">\U0001F1E6\U0001F1FA AUD</a>
+          <a href="{{ROOT}}contact.html">{FLAG_ICONS['EU']} EUR</a>
+          <a href="{{ROOT}}contact.html">{FLAG_ICONS['GB']} GBP</a>
+          <a href="{{ROOT}}contact.html">{FLAG_ICONS['CA']} CAD</a>
+          <a href="{{ROOT}}contact.html">{FLAG_ICONS['AU']} AUD</a>
         </div>
       </div>
       <a href="{{ROOT}}contact.html" class="btn btn-primary">Get Free Quote</a>

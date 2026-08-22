@@ -219,6 +219,7 @@ ul { margin: 0; padding: 0; list-style: none; }
 .currency-toggle .chevron { font-size: 0.7rem; opacity: 0.8; }
 .currency-dropdown { left: auto; right: 0; min-width: 170px; }
 .currency-dropdown a { display: flex; align-items: center; gap: 8px; }
+.currency-toggle svg, .currency-dropdown svg { flex-shrink: 0; border-radius: 2px; }
 
 .has-dropdown { position: relative; }
 .dropdown {
