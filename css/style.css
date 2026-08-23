@@ -313,6 +313,76 @@ ul { margin: 0; padding: 0; list-style: none; }
 }
 .hero-art .emoji { font-size: 5rem; }
 
+/* Hero orbit graphic — original hub-and-spoke illustration (no stock art):
+   a central hub badge for Micro Service surrounded by 8 small nodes for
+   our real services, connected with thin lines. Pure HTML/CSS/inline SVG,
+   in the site's own navy/gold brand colors, consistent with the emoji-icon
+   language used everywhere else on the site. */
+.orbit {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
+}
+.orbit-lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.orbit-lines line {
+  stroke: rgba(255, 255, 255, 0.25);
+  stroke-width: 0.6;
+  stroke-dasharray: 2.2 2.2;
+}
+.orbit-hub {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 27%;
+  aspect-ratio: 1 / 1;
+  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-dark) 100%);
+  border: 3px solid #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.7rem;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+  z-index: 2;
+}
+.orbit-node {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 82px;
+  z-index: 1;
+}
+.orbit-icon {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  font-size: 1.2rem;
+}
+.orbit-label {
+  font-size: 0.66rem;
+  font-weight: 600;
+  color: #dbe8f5;
+  text-align: center;
+  line-height: 1.15;
+}
+
 /* Trust bar */
 .trust-bar {
   background: var(--color-navy);
@@ -757,6 +827,14 @@ ul { margin: 0; padding: 0; list-style: none; }
   .nav-cta { gap: 8px; }
   .nav-cta .btn { padding: 9px 14px; font-size: 0.82rem; }
   .nav-toggle { width: 36px; height: 36px; }
+  /* Narrow phones: the orbit graphic's node labels have no room to sit
+     next to the icons without risking overflow, so drop to icons-only —
+     the hub-and-spoke shape still reads fine at a glance. */
+  .hero-art { padding: 22px; }
+  .orbit-label { display: none; }
+  .orbit-node { width: auto; }
+  .orbit-icon { width: 32px; height: 32px; font-size: 1rem; }
+  .orbit-hub { font-size: 1.4rem; }
 }
 
 /* Floating contact widgets (Fiverr + WhatsApp) */

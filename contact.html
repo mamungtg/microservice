@@ -9,7 +9,7 @@
 <title>Fix My WordPress Site — Contact | Micro Service</title>
 <meta name="description" content="Send a website repair request to Micro Service and get a quote fast.">
 <link rel="stylesheet" href="css/style.css">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛠️</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2248%22 fill=%22%230b2c4d%22/><text x=%2250%22 y=%2268%22 font-size=%2258%22 text-anchor=%22middle%22>🛠️</text></svg>">
 </head>
 <body>
 <header class="site-header">
@@ -47,7 +47,7 @@
 
 <section class="section">
   <div class="container" style="max-width:760px;">
-    <form class="support-form" id="repair-form" action="https://mspointbd-mail-relay.hoque-mdmominul.workers.dev/" method="post" enctype="multipart/form-data">
+    <form class="support-form" id="repair-form" action="https://mspointbd-mail-relay.YOUR-SUBDOMAIN.workers.dev/" method="post" enctype="multipart/form-data">
       <!-- Honeypot: real visitors never see or fill this in (hidden via CSS).
            The mail-relay Worker treats any submission with this field
            non-empty as a bot and silently drops it. -->

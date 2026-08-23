@@ -30,7 +30,7 @@ FORM_TARGET_EMAIL = "mominul@mspointbd.com"
 # DEPLOY.md), then replace this URL with the *.workers.dev URL it prints
 # (or your own custom domain/route once you've set one up) and re-run
 # `python3 build.py`.
-FORM_ENDPOINT = "https://mspointbd-mail-relay.hoque-mdmominul.workers.dev/"
+FORM_ENDPOINT = "https://mspointbd-mail-relay.YOUR-SUBDOMAIN.workers.dev/"
 
 # Default trust badges shown under every service hero — override per page if needed.
 DEFAULT_TRUST_BADGES = ["After-Sales Support", "Experienced Team", "Fair Pricing", "Fast Turnaround"]
@@ -116,7 +116,7 @@ def render_head(title, description):
 <title>{title} | {SITE_NAME}</title>
 <meta name="description" content="{description}">
 <link rel="stylesheet" href="{{ASSET}}css/style.css">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>\U0001F6E0️</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2248%22 fill=%22%230b2c4d%22/><text x=%2250%22 y=%2268%22 font-size=%2258%22 text-anchor=%22middle%22>\U0001F6E0️</text></svg>">
 </head>
 <body>
 """
@@ -858,7 +858,51 @@ home_body = f"""
         </div>
       </div>
       <div class="hero-art">
-        <div class="emoji">\U0001F6E0️\U0001F4BB</div>
+        <div class="orbit">
+          <svg class="orbit-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <line x1="50" y1="50" x2="50" y2="10"></line>
+            <line x1="50" y1="50" x2="78" y2="22"></line>
+            <line x1="50" y1="50" x2="90" y2="50"></line>
+            <line x1="50" y1="50" x2="78" y2="78"></line>
+            <line x1="50" y1="50" x2="50" y2="90"></line>
+            <line x1="50" y1="50" x2="22" y2="78"></line>
+            <line x1="50" y1="50" x2="10" y2="50"></line>
+            <line x1="50" y1="50" x2="22" y2="22"></line>
+          </svg>
+          <div class="orbit-hub"><span>\U0001F6E0️</span></div>
+          <div class="orbit-node" style="top:10%;left:50%;">
+            <span class="orbit-icon">\U0001F41B</span>
+            <span class="orbit-label">Malware Removal</span>
+          </div>
+          <div class="orbit-node" style="top:22%;left:78%;">
+            <span class="orbit-icon">\U0001F680</span>
+            <span class="orbit-label">Speed Optimization</span>
+          </div>
+          <div class="orbit-node" style="top:50%;left:90%;">
+            <span class="orbit-icon">\U0001F69A</span>
+            <span class="orbit-label">Migration</span>
+          </div>
+          <div class="orbit-node" style="top:78%;left:78%;">
+            <span class="orbit-icon">\U0001F4DD</span>
+            <span class="orbit-label">Small Tasks</span>
+          </div>
+          <div class="orbit-node" style="top:90%;left:50%;">
+            <span class="orbit-icon">\U0001F501</span>
+            <span class="orbit-label">DevOps &amp; CI/CD</span>
+          </div>
+          <div class="orbit-node" style="top:78%;left:22%;">
+            <span class="orbit-icon">\U0001F6E1️</span>
+            <span class="orbit-label">Cybersecurity</span>
+          </div>
+          <div class="orbit-node" style="top:50%;left:10%;">
+            <span class="orbit-icon">\U0001F4BB</span>
+            <span class="orbit-label">Website Dev</span>
+          </div>
+          <div class="orbit-node" style="top:22%;left:22%;">
+            <span class="orbit-icon">\U0001F3A8</span>
+            <span class="orbit-label">Redesign</span>
+          </div>
+        </div>
         <p style="color:#dbe8f5;margin-top:14px;font-size:0.9rem;">WordPress repair, security &amp; performance — handled for you.</p>
       </div>
     </div>
