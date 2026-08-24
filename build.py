@@ -30,7 +30,7 @@ FORM_TARGET_EMAIL = "mominul@mspointbd.com"
 # DEPLOY.md), then replace this URL with the *.workers.dev URL it prints
 # (or your own custom domain/route once you've set one up) and re-run
 # `python3 build.py`.
-FORM_ENDPOINT = "https://mspointbd-mail-relay.YOUR-SUBDOMAIN.workers.dev/"
+FORM_ENDPOINT = "https://mspointbd-mail-relay.hoque-mdmominul.workers.dev/"
 
 # Default trust badges shown under every service hero — override per page if needed.
 DEFAULT_TRUST_BADGES = ["After-Sales Support", "Experienced Team", "Fair Pricing", "Fast Turnaround"]
@@ -47,7 +47,11 @@ SOCIAL_ICONS = {
     "x": '<svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M18.24 3H21l-6.55 7.49L22.2 21h-6.1l-4.78-6.24L5.8 21H3l7-8L2.6 3h6.25l4.32 5.72L18.24 3zm-1.07 16.17h1.68L7.9 4.74H6.1l11.07 14.43z"/></svg>',
     "youtube": '<svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor"><path d="M23 12s0-3.5-.45-5.17a2.78 2.78 0 0 0-1.96-1.97C18.88 4.4 12 4.4 12 4.4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.95 1.97C1 8.5 1 12 1 12s0 3.5.45 5.17a2.78 2.78 0 0 0 1.95 1.97c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.95-1.97C23 15.5 23 12 23 12zM9.75 15.3V8.7l5.75 3.3-5.75 3.3z"/></svg>',
     "whatsapp": '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 2.1a9.9 9.9 0 0 0-8.53 14.94L2 22l5.1-1.4A9.9 9.9 0 1 0 12 2.1zm0 18.05a8.1 8.1 0 0 1-4.15-1.14l-.3-.18-3.1.85.83-3-.19-.31A8.1 8.1 0 1 1 12 20.15zm4.4-6.06c-.24-.12-1.43-.7-1.65-.79-.22-.08-.38-.12-.55.13-.16.24-.63.78-.77.95-.14.16-.28.18-.52.06-.24-.12-1-.37-1.92-1.18-.71-.63-1.19-1.42-1.33-1.66-.14-.24-.02-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.55-1.33-.76-1.82-.2-.48-.4-.41-.55-.42h-.47c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32 .98 2.48c.12.16 1.7 2.6 4.13 3.64.58.25 1.03.4 1.38.51.58.18 1.11.16 1.53.1.47-.07 1.43-.58 1.63-1.15.2-.56.2-1.04.14-1.15-.06-.1-.22-.16-.46-.28z"/></svg>',
-    "fiverr": '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M14.5 2C11 2 9 4.2 9 7.6V8H6v3h3v9h3v-9h3.5V8H12v-.4C12 6 12.8 5 14.6 5c.5 0 1 .1 1.4.2V2.2C15.6 2.1 15 2 14.5 2zM4 8v12h3V8H4zm14.5 0a1.75 1.75 0 1 0 0-3.5 1.75 1.75 0 0 0 0 3.5zM17 20h3V8h-3v12z"/></svg>',
+    # Fiverr's actual mark is a bold lowercase "fi" monogram. A hand-drawn
+    # path attempt at that shape rendered as garbled letters at this tiny
+    # size, so this renders the real letters "fi" as bold SVG text instead
+    # — guaranteed legible, and reads the same way the real logo does.
+    "fiverr": '<svg viewBox="0 0 32 32" width="18" height="18"><text x="16" y="23" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="19" fill="currentColor">fi</text></svg>',
 }
 
 # Flag icons for the currency menu — deliberately NOT emoji flags (🇺🇸 etc.).
