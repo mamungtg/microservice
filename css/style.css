@@ -742,6 +742,35 @@ ul { margin: 0; padding: 0; list-style: none; }
 }
 .hint { font-size: 0.8rem; color: #8a99a8; margin-top: 4px; }
 
+/* DevOps pipeline flow diagram — sequential stage cards connected by
+   arrows, ending with a feedback note that loops back to the top. */
+.pipeline-flow { display: flex; flex-direction: column; align-items: center; margin-top: 12px; }
+.pipeline-stage {
+  display: flex; align-items: center; gap: 16px;
+  background: #fff; border: 1px solid var(--color-border);
+  border-radius: var(--radius-md); box-shadow: var(--shadow-sm);
+  padding: 16px 22px; width: 100%; max-width: 460px;
+}
+.pipeline-num {
+  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+  background: var(--color-primary); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 0.88rem;
+}
+.pipeline-name { font-weight: 800; font-size: 1rem; color: var(--color-ink); text-transform: uppercase; letter-spacing: 0.03em; }
+.pipeline-tools { font-size: 0.85rem; color: #5b6b7a; margin-top: 2px; }
+.pipeline-arrow { font-size: 1.3rem; color: var(--color-accent-dark); line-height: 1; padding: 6px 0; }
+.pipeline-stage--feedback { border-color: var(--color-accent); background: #fff8ec; }
+.pipeline-stage--feedback .pipeline-num { background: var(--color-accent-dark); }
+
+/* Tool chip grid — flat list of named tools/platforms. */
+.tool-chip-grid { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.tool-chip {
+  background: var(--color-bg-blue); color: var(--color-primary);
+  font-weight: 700; font-size: 0.85rem; padding: 9px 18px;
+  border-radius: 999px; border: 1px solid rgba(20, 80, 143, 0.15);
+}
+
 /* Footer */
 .site-footer { background: var(--color-navy); color: #b9cfe6; padding-top: 56px; }
 .footer-grid {

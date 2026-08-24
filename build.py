@@ -670,43 +670,12 @@ service_page(
     ],
 )
 
-service_page(
-    slug="services-infrastructure-devops.html",
-    eyebrow="Infrastructure & DevOps",
-    title="Infrastructure & DevOps",
-    sub="Servers, networks, and deployment pipelines built and managed properly — staging environments, CI/CD, system administration, firewalls, and virtualization, all under one team.",
-    stat_line="Custom-scoped engagements · Free scoping call · Money-back guarantee on setup work",
-    intro_heading="Need Infrastructure You Can Actually Trust?",
-    intro_paras=[
-        "If every deployment feels risky, your servers are managed ad hoc, or nobody's quite sure how your network and Active Directory are actually configured, your infrastructure needs a safer foundation.",
-        "This service covers the full stack: CI/CD and deployment automation, day-to-day system administration, network and firewall security, and virtualization/Active Directory setup — scoped and quoted based on what you actually need, not a one-size-fits-all package.",
-    ],
-    steps=[
-        ("Assess", "We review your current infrastructure, hosting, workflow, and tooling to see what's missing or risky."),
-        ("Build", "We set up staging environments, CI/CD pipelines, server administration, firewalls, and virtualization as scoped."),
-        ("Handover", "We test everything with you and document it so your team can run it independently — or we manage it ongoing."),
-    ],
-    about_cards=[
-        ("\U0001F5A5️", "Staging &amp; Production Setup", "A proper staging environment so changes are tested before they ever touch production."),
-        ("\U0001F501", "Automated Deployment Pipelines (CI/CD)", "Pipelines that push tested changes to production automatically and consistently."),
-        ("\U0001F5C2️", "Version Control Workflows", "Git-based workflows so every change is tracked and reversible."),
-        ("\U0001F4BE", "Automated Backups &amp; Rollback", "Scheduled backups with a fast, tested rollback process if a deployment goes wrong."),
-        ("\U0001F6E0️", "System Administration", "Ongoing or one-time server administration — patching, resource monitoring, routine maintenance across Linux and Windows Server."),
-        ("\U0001F525", "Network &amp; Firewall Security", "Firewall rules, network segmentation, and VPN configuration tailored to how your infrastructure is actually used."),
-        ("\U0001F5C3️", "Virtualization &amp; Active Directory", "VM setup and management, plus Active Directory domain, user, and group configuration for Windows-based environments."),
-        ("\U0001F514", "Monitoring &amp; Alerts", "Automated checks and alerts so you know immediately if a deployment or system issue needs attention."),
-    ],
-    faq_items=[
-        ("Do I need an in-house developer or IT team?", "No. We set up the workflow and document it clearly enough for a non-technical owner to follow, though it's most useful if you or your team make regular changes."),
-        ("Will this work with my current hosting or servers?", "In most cases, yes — we work with your existing infrastructure. If something doesn't support the tooling required, we'll flag that upfront before starting."),
-        ("There's no fixed price here — how does pricing work?", "Infrastructure work varies too much for a flat rate to be honest. We scope your specific needs on a free call, then send a clear, itemized quote before any work begins."),
-        ("What if something breaks after setup?", "That's the point of the rollback and monitoring we build — you can revert to a known-good state quickly instead of troubleshooting live."),
-        ("Do you manage this ongoing, or just set it up once?", "Both are available. Some clients want a one-time setup handed off to their team; others prefer we manage it on an ongoing basis."),
-        ("What access do you need?", 'We\'ll need hosting/server access and access to any existing repository, network, or directory service depending on scope. <a href="contact.html">Open a support ticket</a> and we\'ll guide you through it.'),
-    ],
-    closing_heading="Ready for Infrastructure You Can Trust?",
-    closing_sub="From CI/CD pipelines to firewalls and Active Directory, we scope exactly what your infrastructure needs on a free call, then send a clear quote.",
-    cta_label="Get a Custom Quote",
+devops_body = service_hero(
+    "Infrastructure & DevOps",
+    "Infrastructure & DevOps",
+    "Servers, networks, and deployment pipelines built and managed properly — staging environments, CI/CD, system administration, firewalls, and virtualization, all under one team.",
+    "Custom-scoped engagements · Free scoping call · Money-back guarantee on setup work",
+    "Get a Custom Quote",
     hero_stats=[
         ("\U0001F5A5️", "Custom", "Scoped Engagements"),
         ("\U0001F4DE", "Free", "Scoping Call"),
@@ -714,6 +683,111 @@ service_page(
         ("✅", "No", "Long-Term Contract"),
     ],
 )
+
+devops_body += f"""
+<section class="section">
+  <div class="container" style="max-width:820px;">
+    <h2 class="text-center">Need Infrastructure You Can Actually Trust?</h2>
+    <p>If every deployment feels risky, your servers are managed ad hoc, or nobody's quite sure how your network and Active Directory are actually configured, your infrastructure needs a safer foundation.</p>
+    <p>This service covers the full stack: CI/CD and deployment automation, day-to-day system administration, network and firewall security, and virtualization/Active Directory setup — scoped and quoted based on what you actually need, not a one-size-fits-all package.</p>
+  </div>
+</section>"""
+
+devops_body += three_steps(
+    "How Our Infrastructure &amp; DevOps Works",
+    "We keep the process simple so you always know what's happening.",
+    [
+        ("Assess", "We review your current infrastructure, hosting, workflow, and tooling to see what's missing or risky."),
+        ("Build", "We set up staging environments, CI/CD pipelines, server administration, firewalls, and virtualization as scoped."),
+        ("Handover", "We test everything with you and document it so your team can run it independently — or we manage it ongoing."),
+    ],
+)
+
+# Pipeline diagram: PLAN -> CODE -> BUILD -> TEST -> CONTAINERIZE ->
+# INFRASTRUCTURE -> DEPLOY -> MONITOR -> FEEDBACK (loops back to PLAN),
+# each stage labeled with the specific tools used for it.
+_pipeline_stages = [
+    ("Plan", "Jira &middot; GitHub"),
+    ("Code", "Git &middot; GitHub / GitLab"),
+    ("Build", "Jenkins &middot; GitHub Actions"),
+    ("Test", "SonarQube &middot; Unit Tests"),
+    ("Containerize", "Docker"),
+    ("Infrastructure", "Terraform &middot; Ansible"),
+    ("Deploy", "Kubernetes &middot; Helm &middot; Argo CD"),
+    ("Monitor", "Prometheus &middot; Grafana &middot; ELK / Loki"),
+]
+_pipeline_html = ""
+for i, (name, tools) in enumerate(_pipeline_stages, start=1):
+    _pipeline_html += f"""<div class="pipeline-stage"><span class="pipeline-num">{i}</span><div><div class="pipeline-name">{name}</div><div class="pipeline-tools">{tools}</div></div></div><div class="pipeline-arrow">↓</div>"""
+_pipeline_html += """<div class="pipeline-stage pipeline-stage--feedback"><span class="pipeline-num">9</span><div><div class="pipeline-name">Feedback</div><div class="pipeline-tools">Metrics &amp; incident learnings feed back into planning</div></div></div>"""
+
+devops_body += f"""
+<section class="section section--light">
+  <div class="container" style="max-width:640px;">
+    <div class="section-head">
+      <h2>Our DevOps Pipeline</h2>
+      <p>A modern CI/CD pipeline, end to end — plan, build, test, deploy, and monitor, with continuous feedback closing the loop.</p>
+    </div>
+    <div class="pipeline-flow">{_pipeline_html}</div>
+    <p class="hint text-center" style="margin-top:18px;">↻ Feedback loops back into Planning — this is an ongoing cycle we help you run, not a one-time setup.</p>
+  </div>
+</section>"""
+
+_tools = [
+    "GitHub / GitLab", "Jenkins / GitHub Actions", "Docker", "Kubernetes",
+    "Terraform", "Ansible", "Helm", "Argo CD", "Prometheus", "Grafana",
+    "ELK / Loki", "SonarQube", "AWS / Azure / GCP", "Jira",
+]
+_tools_html = "".join(f'<span class="tool-chip">{t}</span>' for t in _tools)
+devops_body += f"""
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <h2>Tools &amp; Technologies We Work With</h2>
+      <p>Industry-standard tools across the full pipeline — matched to what your team already uses wherever possible.</p>
+    </div>
+    <div class="tool-chip-grid">{_tools_html}</div>
+  </div>
+</section>"""
+
+devops_body += feature_cards(
+    "About Our Infrastructure &amp; DevOps",
+    "A closer look at exactly what's included.",
+    [
+        ("\U0001F5A5️", "Staging &amp; Production Setup", "A proper staging environment so changes are tested before they ever touch production."),
+        ("\U0001F501", "CI/CD Pipelines (Jenkins &amp; GitHub Actions)", "Automated build-test-deploy pipelines that push tested changes to production automatically and consistently."),
+        ("\U0001F5C2️", "Version Control Workflows (Git)", "Git-based workflows on GitHub or GitLab so every change is tracked and reversible."),
+        ("\U0001F3D7️", "Infrastructure as Code (Terraform &amp; Ansible)", "Servers and environments defined as code — repeatable, version-controlled, and easy to rebuild if something goes wrong."),
+        ("\U0001F433", "Containerization &amp; Orchestration (Docker &amp; Kubernetes)", "Applications packaged in Docker and deployed to Kubernetes with Helm charts and Argo CD for GitOps-style releases."),
+        ("\U0001F4CA", "Monitoring &amp; Observability (Prometheus, Grafana, ELK/Loki)", "Metrics, dashboards, and centralized logs so you know immediately if a deployment or system issue needs attention."),
+        ("\U0001F6E0️", "System Administration", "Ongoing or one-time server administration — patching, resource monitoring, routine maintenance across Linux and Windows Server."),
+        ("\U0001F525", "Network &amp; Firewall Security", "Firewall rules, network segmentation, and VPN configuration tailored to how your infrastructure is actually used."),
+        ("\U0001F5C3️", "Virtualization &amp; Active Directory", "VM setup and management, plus Active Directory domain, user, and group configuration for Windows-based environments."),
+    ],
+)
+
+devops_body += f"""
+<section class="section">
+  <div class="container" style="max-width:760px;">
+    <div class="section-head"><h2>Frequently Asked Questions</h2></div>
+    {faq_block([
+        ("Do I need an in-house developer or IT team?", "No. We set up the workflow and document it clearly enough for a non-technical owner to follow, though it's most useful if you or your team make regular changes."),
+        ("Will this work with my current hosting or servers, or with AWS/Azure/GCP?", "In most cases, yes — we work with your existing infrastructure, whether that's on-premises, a VPS, or a major cloud provider (AWS, Azure, or GCP). If something doesn't support the tooling required, we'll flag that upfront before starting."),
+        ("There's no fixed price here — how does pricing work?", "Infrastructure work varies too much for a flat rate to be honest. We scope your specific needs on a free call, then send a clear, itemized quote before any work begins."),
+        ("What if something breaks after setup?", "That's the point of the rollback and monitoring we build — you can revert to a known-good state quickly instead of troubleshooting live."),
+        ("Do you manage this ongoing, or just set it up once?", "Both are available. Some clients want a one-time setup handed off to their team; others prefer we manage it on an ongoing basis."),
+        ("What access do you need?", "We'll need hosting/server access and access to any existing repository, network, or directory service depending on scope. <a href='contact.html'>Open a support ticket</a> and we'll guide you through it."),
+    ])}
+  </div>
+</section>"""
+
+devops_body += cta_banner(
+    "Ready for Infrastructure You Can Trust?",
+    "From CI/CD pipelines to firewalls and Active Directory, we scope exactly what your infrastructure needs on a free call, then send a clear quote.",
+    "Get a Custom Quote",
+)
+
+page("services-infrastructure-devops.html", "Infrastructure & DevOps", "Servers, networks, and deployment pipelines built and managed properly — staging environments, CI/CD, system administration, firewalls, and virtualization, all under one team.", devops_body, og_image="assets/og-infrastructure-devops.png")
 
 # --------------------------------------------------------------------------
 # REDESIGN & DEVELOPMENT — tiered pricing page (Rebuild / Redesign / New
