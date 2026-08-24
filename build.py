@@ -80,14 +80,26 @@ PAYMENT_BADGES_HTML = """
 # --------------------------------------------------------------------------
 # Services that have full pages built (slug -> nav label). Order matters for nav.
 SERVICES_LIVE = [
-    ("services-malware-removal.html", "Malware Removal"),
+    ("services-website-repair-small-fixes.html", "Website Repair & Small Fixes"),
+    ("services-malware-removal-security-hardening.html", "Malware Removal & Security Hardening"),
     ("services-speed-optimization.html", "Speed Optimization"),
     ("services-migration.html", "Migration"),
-    ("services-small-tasks.html", "Small Tasks"),
-    ("services-devops-automation-cicd.html", "DevOps, Automation & CI/CD"),
-    ("services-cybersecurity-compliance.html", "Cybersecurity & Compliance"),
-    ("services-website-development.html", "Website Development"),
-    ("services-redesign.html", "Redesign"),
+    ("services-redesign-development.html", "Redesign & Development"),
+    ("services-infrastructure-devops.html", "Infrastructure & DevOps"),
+    ("services-saas-systems-integration.html", "SaaS & Systems Integration"),
+    ("services-ai-development-integration.html", "AI Development & Integration"),
+]
+# Old slugs that have been merged/renamed away — each gets a redirect stub
+# (meta-refresh + canonical) pointing at its replacement, so old bookmarks,
+# search-engine links, and shared URLs still land somewhere useful instead
+# of 404ing.
+REDIRECTS = [
+    ("services-malware-removal.html", "services-malware-removal-security-hardening.html"),
+    ("services-cybersecurity-compliance.html", "services-malware-removal-security-hardening.html"),
+    ("services-small-tasks.html", "services-website-repair-small-fixes.html"),
+    ("services-website-development.html", "services-redesign-development.html"),
+    ("services-redesign.html", "services-redesign-development.html"),
+    ("services-devops-automation-cicd.html", "services-infrastructure-devops.html"),
 ]
 # Services mentioned on the reference site but not yet supplied — shown as "coming soon"
 SERVICES_SOON = []
@@ -104,7 +116,20 @@ NAV_ITEMS = [
 # HEADER / FOOTER
 # --------------------------------------------------------------------------
 
-def render_head(title, description):
+# Site-wide fallback OG/social-share image, used by any page that doesn't
+# pass its own og_image (see page()/service_page()). Per-service pages get
+# a matching branded image generated for that specific service instead —
+# see assets/og-*.png.
+DEFAULT_OG_IMAGE = "assets/og-image.png"
+
+
+def render_head(title, description, filename="index.html", og_image=None):
+    page_title = f"{title} | {SITE_NAME}"
+    # The homepage's canonical/OG URL is the bare domain, not "/index.html" —
+    # avoids the two being treated as duplicate-content URLs by crawlers.
+    url_path = "" if filename == "index.html" else filename
+    canonical_url = f"https://{DOMAIN}/{url_path}"
+    image_url = f"https://{DOMAIN}/{og_image or DEFAULT_OG_IMAGE}"
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -113,8 +138,23 @@ def render_head(title, description):
 <!-- End cookieyes banner -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{title} | {SITE_NAME}</title>
+<title>{page_title}</title>
 <meta name="description" content="{description}">
+<link rel="canonical" href="{canonical_url}">
+<!-- Open Graph (Facebook, WhatsApp, LinkedIn) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="{SITE_NAME}">
+<meta property="og:title" content="{page_title}">
+<meta property="og:description" content="{description}">
+<meta property="og:url" content="{canonical_url}">
+<meta property="og:image" content="{image_url}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<!-- Twitter/X Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{page_title}">
+<meta name="twitter:description" content="{description}">
+<meta name="twitter:image" content="{image_url}">
 <link rel="stylesheet" href="{{ASSET}}css/style.css">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2248%22 fill=%22%230b2c4d%22/><text x=%2250%22 y=%2268%22 font-size=%2258%22 text-anchor=%22middle%22>\U0001F6E0️</text></svg>">
 </head>
@@ -125,13 +165,23 @@ def render_header(active_href):
     def is_active(href):
         return "active" if href == active_href else ""
 
-    services_dd = '<div class="dropdown">'
-    for href, label in SERVICES_LIVE:
-        services_dd += f'<a href="{{ROOT}}{href}">{label}</a>'
+    # Mega-menu: first 4 SERVICES_LIVE entries are the fixed-price /
+    # fast-turnaround services, last 4 are the custom-quote / larger-scope
+    # services — this split matches the order the taxonomy was designed in.
+    fix_col, scale_col = SERVICES_LIVE[:4], SERVICES_LIVE[4:]
+    services_dd = '<div class="dropdown mega-menu">'
+    services_dd += '<div class="mega-col"><div class="mega-col-head">Fix &amp; Optimize</div>'
+    for href, label in fix_col:
+        services_dd += f'<a href="{{ROOT}}{href}" class="mega-item"><span class="mega-label">{label}</span></a>'
+    services_dd += '</div>'
+    services_dd += '<div class="mega-col"><div class="mega-col-head">Build &amp; Scale</div>'
+    for href, label in scale_col:
+        services_dd += f'<a href="{{ROOT}}{href}" class="mega-item"><span class="mega-label">{label}</span></a>'
     if SERVICES_SOON:
         services_dd += '<span class="soon">Coming soon</span>'
         for label in SERVICES_SOON:
-            services_dd += f'<a href="#" style="opacity:.55;pointer-events:none;">{label}</a>'
+            services_dd += f'<a href="#" class="mega-item" style="opacity:.55;pointer-events:none;"><span class="mega-label">{label}</span></a>'
+    services_dd += '</div>'
     services_dd += '</div>'
 
     nav_html = ""
@@ -174,20 +224,19 @@ def render_footer():
     <div class="footer-grid">
       <div class="footer-brand">
         <div class="logo">Micro<span class="accent">Service</span></div>
-        <p>Fast, reliable WordPress repair, security, and performance support for site owners worldwide. Fixes from $49. No contracts.</p>
+        <p>Website repair, security, infrastructure, integrations, and AI development for businesses worldwide. Fixes from $49. No long-term contracts required.</p>
       </div>
       <div>
         <h4>Services</h4>
         <ul>
-          <li><a href="{{ROOT}}contact.html">Website Repair</a></li>
-          <li><a href="{{ROOT}}services-malware-removal.html">Malware Removal</a></li>
+          <li><a href="{{ROOT}}services-website-repair-small-fixes.html">Website Repair &amp; Small Fixes</a></li>
+          <li><a href="{{ROOT}}services-malware-removal-security-hardening.html">Malware Removal &amp; Security</a></li>
           <li><a href="{{ROOT}}services-speed-optimization.html">Speed Optimization</a></li>
           <li><a href="{{ROOT}}services-migration.html">Migration</a></li>
-          <li><a href="{{ROOT}}services-small-tasks.html">Small Tasks</a></li>
-          <li><a href="{{ROOT}}services-devops-automation-cicd.html">DevOps &amp; CI/CD</a></li>
-          <li><a href="{{ROOT}}services-cybersecurity-compliance.html">Cybersecurity &amp; Compliance</a></li>
-          <li><a href="{{ROOT}}services-website-development.html">Website Development</a></li>
-          <li><a href="{{ROOT}}services-redesign.html">Redesign</a></li>
+          <li><a href="{{ROOT}}services-redesign-development.html">Redesign &amp; Development</a></li>
+          <li><a href="{{ROOT}}services-infrastructure-devops.html">Infrastructure &amp; DevOps</a></li>
+          <li><a href="{{ROOT}}services-saas-systems-integration.html">SaaS &amp; Systems Integration</a></li>
+          <li><a href="{{ROOT}}services-ai-development-integration.html">AI Development &amp; Integration</a></li>
         </ul>
       </div>
       <div>
@@ -253,13 +302,37 @@ def render_footer():
 </html>
 """
 
-def page(filename, title, description, body_html, active_href=None, asset_prefix=""):
+def page(filename, title, description, body_html, active_href=None, asset_prefix="", og_image=None):
     active_href = active_href or filename
-    html = render_head(title, description) + render_header(active_href) + body_html + render_footer()
+    html = render_head(title, description, filename, og_image) + render_header(active_href) + body_html + render_footer()
     html = html.replace("{ASSET}", asset_prefix).replace("{ROOT}", asset_prefix)
     with open(os.path.join(ROOT, filename), "w", encoding="utf-8") as f:
         f.write(html)
     print("wrote", filename)
+
+
+def redirect_page(old_filename, new_filename):
+    """Minimal stub for a URL that has been merged/renamed away. Redirects
+    real visitors instantly via meta-refresh, tells search engines the
+    canonical location has moved (canonical link + noindex), and still
+    shows a plain link/click-through in case the refresh is blocked."""
+    html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="refresh" content="0; url={new_filename}">
+<link rel="canonical" href="https://{DOMAIN}/{new_filename}">
+<meta name="robots" content="noindex,follow">
+<title>Moved — {SITE_NAME}</title>
+</head>
+<body>
+<p>This page has moved. <a href="{new_filename}">Continue to the new page →</a></p>
+</body>
+</html>
+"""
+    with open(os.path.join(ROOT, old_filename), "w", encoding="utf-8") as f:
+        f.write(html)
+    print("wrote redirect", old_filename, "->", new_filename)
 
 
 # --------------------------------------------------------------------------
@@ -287,9 +360,21 @@ def cta_banner(heading, sub, cta_label, cta_href="contact.html"):
 </section>"""
 
 
-def service_hero(eyebrow, title, sub, stat_line, cta_label, cta_href="contact.html", badges=None):
+def service_hero(eyebrow, title, sub, stat_line, cta_label, cta_href="contact.html", badges=None, hero_stats=None, hero_checklist=None):
     badges = badges if badges is not None else DEFAULT_TRUST_BADGES
     badges_html = "".join(f"<span>{b}</span>" for b in badges)
+    if hero_checklist:
+        checklist_title, checklist_items = hero_checklist
+        items_html = "".join(f'<div class="hero-checklist-item">{item}</div>' for item in checklist_items)
+        art_html = f'<div class="hero-checklist"><div class="hero-checklist-title">{checklist_title}</div><div class="hero-checklist-grid">{items_html}</div></div>'
+    elif hero_stats:
+        items_html = "".join(
+            f"""<div class="hero-trust-item"><div class="hero-trust-icon">{icon}</div><span class="hero-trust-value">{value}</span><span class="hero-trust-label">{label}</span></div>"""
+            for icon, value, label in hero_stats
+        )
+        art_html = f'<div class="hero-trust-grid">{items_html}</div>'
+    else:
+        art_html = '<div class="emoji">\U0001F6E0️</div>'
     return f"""
 <section class="hero">
   <div class="container">
@@ -305,7 +390,7 @@ def service_hero(eyebrow, title, sub, stat_line, cta_label, cta_href="contact.ht
         </div>
       </div>
       <div class="hero-art">
-        <div class="emoji">\U0001F6E0️</div>
+        {art_html}
       </div>
     </div>
   </div>
@@ -347,8 +432,8 @@ def feature_cards(heading, sub, cards, bg="light"):
 
 
 def service_page(slug, eyebrow, title, sub, stat_line, intro_heading, intro_paras,
-                  steps, about_cards, faq_items, closing_heading, closing_sub, cta_label, badges=None):
-    body = service_hero(eyebrow, title, sub, stat_line, cta_label, badges=badges)
+                  steps, about_cards, faq_items, closing_heading, closing_sub, cta_label, badges=None, hero_stats=None, hero_checklist=None):
+    body = service_hero(eyebrow, title, sub, stat_line, cta_label, badges=badges, hero_stats=hero_stats, hero_checklist=hero_checklist)
     body += f"""
 <section class="section">
   <div class="container" style="max-width:820px;">
@@ -367,7 +452,13 @@ def service_page(slug, eyebrow, title, sub, stat_line, intro_heading, intro_para
   </div>
 </section>"""
     body += cta_banner(closing_heading, closing_sub, cta_label)
-    page(slug, title, sub, body)
+    # Each service gets its own branded OG/social-share image if one has
+    # been generated for it (assets/og-<slug-without-services->.png);
+    # otherwise page() falls back to the site-wide default image.
+    og_key = slug.removeprefix("services-").removesuffix(".html")
+    og_candidate = f"assets/og-{og_key}.png"
+    og_image = og_candidate if os.path.exists(os.path.join(ROOT, og_candidate)) else None
+    page(slug, title, sub, body, og_image=og_image)
 
 
 def coming_soon_service_page(slug, icon, eyebrow, title, sub, highlights):
@@ -396,273 +487,247 @@ def coming_soon_service_page(slug, icon, eyebrow, title, sub, highlights):
 # --------------------------------------------------------------------------
 
 service_page(
-    slug="services-malware-removal.html",
-    eyebrow="Malware Removal",
-    title="WordPress Malware Removal Service",
-    sub="Hacked WordPress site? We remove malware, clean your website, and get you back online fast.",
+    slug="services-malware-removal-security-hardening.html",
+    eyebrow="Security",
+    title="WordPress Malware Removal & Security Hardening",
+    sub="Hacked or vulnerable WordPress site? We clean up active infections and harden your site against the next attack — one service, start to finish.",
     stat_line="3,000+ hacked sites cleaned · 200+ five-star reviews · Cleanup from $199 · Money-back guarantee",
-    intro_heading="Is Your WordPress Site Hacked?",
+    intro_heading="Hacked Right Now, or Trying to Stop It From Happening?",
     intro_paras=[
-        "If your website is redirecting visitors, showing spam links, loading slowly, or displaying browser security warnings, it has likely been compromised.",
-        "Malware does not fix itself. The longer it remains, the more damage it can cause to your site, traffic, and reputation.",
-        "Our WordPress malware removal service is designed for one thing only: to clean your site properly and stop the infection fast.",
+        "If your website is redirecting visitors, showing spam links, loading slowly, or displaying browser security warnings, it has likely been compromised — and malware does not fix itself.",
+        "If your site handles logins, payments, or customer data, cleanup alone isn't enough. This service covers both sides: we remove what's already there, then harden your site so it's significantly harder to compromise again.",
     ],
     steps=[
-        ("Scan", "We scan your WordPress site, plugins, themes, and database to identify malware, injected code, and security vulnerabilities."),
-        ("Clean", "We remove malware, hacked files, database infections, spam links, malicious scripts, and hidden backdoors."),
-        ("Secure", "We clean and lock down your site to block common attack methods and reduce the risk of reinfection."),
+        ("Scan & Audit", "We scan your WordPress site, plugins, themes, and database for malware and vulnerabilities, and run a full security audit across your site and hosting."),
+        ("Clean & Harden", "We remove malware, hacked files, and backdoors, then configure firewalls, access controls, and hardening measures to block common attack methods."),
+        ("Secure & Monitor", "We lock the site down and put ongoing monitoring in place so new risks are caught early instead of turning into the next incident."),
     ],
     about_cards=[
         ("\U0001F50D", "Scan Your Website", "We scan WordPress core files, themes, plugins, and the database to identify malware, injected code, and unauthorized file changes."),
         ("\U0001F9F9", "Remove Malicious Content", "We remove malware, hacked files, spam links, injected scripts, hidden backdoors, and infected database entries from your website."),
         ("\U0001F4C4", "Core File Check", "We review and clean critical files such as wp-config.php, .htaccess, and xmlrpc.php to ensure your site is no longer compromised."),
-        ("\U0001F6E1️", "Security Hardening", "We apply security hardening measures that block common attack methods and help reduce the risk of the same issue happening again."),
+        ("\U0001F525", "Advanced Firewall &amp; Access Control", "Firewall rules and access-control configuration tailored to how your site is actually used, so the same attack doesn't work twice."),
         ("⚫", "Blacklist Removal", "If your site has been blacklisted or is showing browser warnings, we submit a review request to help restore access for visitors."),
-        ("\U0001F4CB", "Detailed Cleanup Report", "You receive a clear report explaining what was found, what was removed, and the steps taken to secure your website."),
+        ("\U0001F6A8", "Incident Response Planning", "A clear, documented plan for what happens if your site is compromised again, so there's no scrambling next time."),
+        ("\U0001F9EA", "Penetration-Style Security Testing", "Controlled testing that simulates real attack methods to confirm your defenses actually hold up, for business-critical sites."),
+        ("\U0001F4CB", "Detailed Cleanup &amp; Hardening Report", "A clear report explaining what was found, what was removed, what was hardened, and the steps taken to secure your website."),
     ],
     faq_items=[
         ("How long does malware removal take?", "Most WordPress malware cleanups are completed within one business day after we receive access. Blacklist removals may take longer, depending on external review times."),
-        ("How much does WordPress malware removal cost?", "Our malware removal service is $199, with no contracts and a full money-back guarantee if we cannot fix your site."),
+        ("How much does this cost?", "Cleanup starts at $199, with no contracts and a full money-back guarantee if we cannot fix your site. Sites needing a deeper security audit or compliance-aligned hardening are quoted after a quick review."),
         ("What if my site gets hacked again?", "If your site is compromised again within 30 days, we will clean it again at no extra cost."),
-        ("Can you remove my browser's security warning?", "Yes. After cleanup, we submit a malware review request through Google Search Console. Warnings are usually removed within a few days once approved."),
-        ("How do I know if my WordPress site has been hacked?", "Common signs include unexpected redirects, spam links or strange pages, browser security warnings, sudden traffic drops, or unusually high server usage. If something looks wrong, it is safer to assume malware is present."),
+        ("Is hardening different from just cleaning it up?", "Yes. Cleanup removes an active infection. Hardening is proactive — firewall rules, access controls, and monitoring configured so the same attack doesn't work again. This service does both in one pass."),
+        ("Do you guarantee compliance with specific regulations?", "We provide guidance aligned with common data-protection practices, but formal legal compliance certification should be confirmed with a qualified compliance professional."),
+        ("Do you work with eCommerce and membership sites?", "Yes — hardening is built specifically for sites handling logins, payments, and sensitive customer data."),
         ("What information do you need to get started?", 'We’ll need your WordPress admin login and hosting account details. <a href="contact.html">Open a support ticket</a> and our team will guide you through it.'),
     ],
-    closing_heading="Get Your Hacked Site Cleaned Today",
-    closing_sub="Our WordPress malware removal service removes malware fast, cleans infected files, secures your site, and helps restore trust with visitors and search engines.<br>Order malware removal now. 100% money-back guarantee if we cannot fix your site.",
-    cta_label="Start My Malware Cleanup",
+    closing_heading="Get Your Site Cleaned, Hardened, and Protected",
+    closing_sub="Our service removes malware fast, cleans infected files, and hardens your site against the next attempt — restoring trust with visitors and search engines.<br>Order your cleanup now. 100% money-back guarantee if we cannot fix your site.",
+    cta_label="Start My Security Cleanup",
+    hero_stats=[
+        ("\U0001F6E1️", "3,000+", "Hacked Sites Cleaned"),
+        ("⭐", "200+", "Five-Star Reviews"),
+        ("\U0001F4B0", "$199", "Starting Price"),
+        ("✅", "100%", "Money-Back Guarantee"),
+    ],
 )
 
 service_page(
     slug="services-speed-optimization.html",
     eyebrow="Speed Optimization",
-    title="WordPress Speed Optimization Service",
-    sub="Slow WordPress site? We optimize your website for speed and performance across all devices.",
+    title="Website & Server Speed Optimization",
+    sub="Slow website or sluggish server? We optimize WordPress sites and the Linux or Windows servers behind them for speed and performance.",
     stat_line="2,000+ sites optimized · 200+ five-star reviews · Speed optimization from $229 · Money-back guarantee",
     intro_heading="Need a One-Time Speed Optimization?",
     intro_paras=[
-        "If your WordPress website feels slow, takes too long to load, or performs poorly on mobile, a one-time speed optimization can make an immediate difference.",
-        "Our WordPress speed optimization service is designed to improve load times, fix performance issues, and create a faster, smoother experience for your visitors without ongoing commitments.",
+        "If your website feels slow, takes too long to load, or performs poorly on mobile, a one-time speed optimization can make an immediate difference.",
+        "We work at both layers: WordPress-level tuning (caching, database, images, plugins) and, when the bottleneck is deeper, server-level tuning on the Linux or Windows machine actually hosting your site — without ongoing commitments.",
     ],
     steps=[
-        ("Optimize", "We analyze your website setup and apply proven performance optimizations to reduce load times and improve responsiveness."),
-        ("Fine-Tune", "We clean up performance bottlenecks, optimize images and database usage, and adjust settings to improve overall speed."),
+        ("Optimize", "We analyze your website and server setup and apply proven performance optimizations to reduce load times and improve responsiveness."),
+        ("Fine-Tune", "We clean up performance bottlenecks at both the site and server level — images, database, plugins, and server resource usage."),
         ("Deliver", "Your website loads faster, responds more smoothly, and delivers a noticeably better experience for visitors across all devices."),
     ],
     about_cards=[
         ("\U0001F4BE", "Caching", "We configure advanced caching to reduce load times and improve how quickly pages are served to visitors."),
-        ("\U0001F5C4️", "Database Optimization", "We clean unnecessary data such as old revisions and unused entries to keep your WordPress database fast and responsive."),
+        ("\U0001F5C4️", "Database Optimization", "We clean unnecessary data such as old revisions and unused entries to keep your database fast and responsive."),
         ("\U0001F5BC️", "Image Compression", "We reduce image file sizes without sacrificing quality to help pages load faster on desktop and mobile."),
         ("\U0001F50C", "Plugin Audit", "We identify plugins that slow your site down and recommend changes where performance is being affected."),
+        ("\U0001F5A5️", "Linux Server Tuning", "We tune Linux server resources — web server config, PHP/process limits, memory and CPU usage — when the bottleneck is the server, not the site."),
+        ("\U0001FA9F", "Windows Server Tuning", "For sites or applications hosted on Windows Server (IIS), we tune server-level settings and resource allocation for faster response times."),
         ("⚠️", "Bad Requests", "We clean up broken or unnecessary requests that can delay page loading and hurt performance."),
         ("\U0001F512", "Brute Force Protection", "We reduce unnecessary login and bot activity that can slow your site and impact server performance."),
     ],
     faq_items=[
-        ("What plugins do you use?", "We select the most suitable tools for your specific setup to achieve the best possible performance improvements."),
-        ("Should I use a CDN?", "A CDN can help in some cases, but many websites see major speed improvements through optimization alone. We focus on what will make the biggest impact for your site."),
+        ("Do you optimize the server, or just the website?", "Both, depending on where the bottleneck actually is. We diagnose first — sometimes it's WordPress-level tuning, sometimes it's the Linux or Windows server underneath, and sometimes it's both."),
+        ("Should I use a CDN?", "A CDN can help in some cases, but many websites see major speed improvements through optimization alone. We focus on what will make the biggest impact for your setup."),
         ("How do you measure speed?", "We test performance before and after optimization using industry-standard tools. If speed does not improve, we offer a full refund."),
         ("Do you support WooCommerce websites?", "Yes. We optimize WooCommerce sites with care to ensure speed improvements without affecting functionality."),
-        ("Can you help move my site to a faster server?", "If hosting performance is limiting your site, we can advise on next steps after optimization."),
-        ("What access do you need?", 'We’ll need WordPress admin access and either FTP or hosting access. <a href="contact.html">Open a support ticket</a> and our team will guide you through it.'),
+        ("Can you help move my site to a faster server?", "If hosting performance is limiting your site, we can advise on next steps after optimization, including migration."),
+        ("What access do you need?", 'We’ll need admin access and either FTP, hosting, or server (SSH/RDP) access depending on scope. <a href="contact.html">Open a support ticket</a> and our team will guide you through it.'),
     ],
-    closing_heading="Get a Faster, Smoother WordPress Website",
+    closing_heading="Get a Faster, Smoother Website",
     closing_sub="A slow website can frustrate visitors, reduce engagement, and hurt conversions. Order your speed optimization today. Satisfaction guaranteed.",
     cta_label="Start My Speed Optimization",
+    hero_stats=[
+        ("\U0001F680", "2,000+", "Sites Optimized"),
+        ("⭐", "200+", "Five-Star Reviews"),
+        ("\U0001F4B0", "$229", "Starting Price"),
+        ("✅", "100%", "Money-Back Guarantee"),
+    ],
 )
 
 service_page(
     slug="services-migration.html",
     eyebrow="Migration",
-    title="WordPress Migration Service Without the Stress",
-    sub="Move your WordPress website safely with zero downtime and no headaches.",
-    stat_line="800+ sites migrated · 200+ five-star reviews · Migrations from $149 · Money-back guarantee",
-    intro_heading="Need a One-Time WordPress Migration?",
+    title="Migration Services Without the Stress",
+    sub="Move your website, database, software, or mail safely with zero downtime and no headaches.",
+    stat_line="800+ migrations completed · 200+ five-star reviews · Migrations from $149 · Money-back guarantee",
+    intro_heading="Need a One-Time Migration?",
     intro_paras=[
-        "Whether you’re switching hosting providers or changing domains, our one-time WordPress migration service makes the process simple and stress free.",
-        "We back up your site, move everything securely, and reconfigure WordPress so it works perfectly in its new location with no downtime.",
+        "Whether you're switching hosting providers, changing domains, upgrading a database, moving software to a new server, or relocating a mail server, our migration service makes the process simple and stress free.",
+        "We back up everything, move it securely, and reconfigure the destination so it works correctly in its new location — with no downtime and no data loss.",
     ],
     steps=[
-        ("Website Backup", "We create a full backup of your WordPress website, including files and database."),
-        ("Transfer", "We securely move your website to the new hosting provider or domain with minimal disruption."),
-        ("Configure", "We reconfigure WordPress to ensure your site works correctly in its new environment."),
+        ("Backup", "We create a full backup of whatever is moving — website files and database, application data, or mailboxes."),
+        ("Transfer", "We securely move it to the new host, server, or provider with minimal disruption."),
+        ("Configure", "We reconfigure everything — DNS, connections, settings — so it works correctly in its new environment."),
     ],
     about_cards=[
-        ("\U0001F4E6", "Website Backup", "We create a complete backup of your WordPress installation, including core files, themes, plugins, media, and database, so your site is protected throughout the migration."),
-        ("\U0001F69A", "Website Transfer", "Once backed up, we move your website to the new hosting provider, ensuring everything works exactly as it did before."),
-        ("\U0001F310", "Domain Update", "If you are changing domains, we help update DNS settings so your domain points to the new location correctly."),
-        ("⚙️", "Reconfiguration", "We update WordPress settings and URLs as needed so your site functions properly after the migration."),
+        ("\U0001F4E6", "Full Backup", "We create a complete backup before touching anything — files, database, application data, or mailboxes — so nothing is at risk during the move."),
+        ("\U0001F69A", "Website Migration", "Move your website to a new host or domain, ensuring everything works exactly as it did before."),
+        ("\U0001F5C4️", "Database Migration", "Upgrade or relocate a database safely, with schema and data integrity checked before and after the move."),
+        ("\U0001F4E5", "Software &amp; Application Migration", "Move installed software or applications to a new server, reconfigured to run correctly in the new environment."),
+        ("✉️", "Mail Server Migration", "Move mailboxes and mail routing to a new provider or server without losing existing mail or breaking delivery."),
+        ("\U0001F310", "Domain &amp; DNS Update", "If you are changing domains, we update DNS settings so everything points to the new location correctly."),
     ],
     faq_items=[
-        ("How much downtime will I experience?", "We aim for zero downtime during your WordPress migration. DNS changes can take up to 24–48 hours to fully propagate, but your site remains accessible during this time."),
-        ("What about my email addresses?", "If your email is hosted with your current provider, those addresses may need to be recreated with the new host. We’ll explain what applies to your setup."),
-        ("Can I change my domain name too?", "Yes. Our WordPress migration service includes domain changes, and we make sure everything is configured correctly."),
-        ("Can you migrate to any hosting provider?", "Yes. We can migrate your WordPress site to any hosting provider that supports WordPress."),
-        ("What do you need to get started?", "We’ll need access to your current and new hosting accounts. Once the migration is complete, we’ll guide you through any final steps."),
+        ("How much downtime will I experience?", "We aim for zero downtime on every migration. DNS changes can take up to 24–48 hours to fully propagate, but the source stays accessible during that window."),
+        ("Can you migrate my database separately from my website?", "Yes. Database migrations (upgrades, server moves) can be scoped and quoted independently of a full website migration."),
+        ("What about my email addresses?", "If you're changing mail providers as part of the move, we migrate mailboxes directly. If email stays with your current provider, we'll explain what applies to your setup."),
+        ("Can I change my domain name too?", "Yes. Domain changes are included, and we make sure everything is configured correctly afterward."),
+        ("Can you migrate to any hosting provider or server?", "Yes. We can migrate to any hosting provider, cloud server, or on-premises server that supports your setup."),
+        ("What do you need to get started?", "We'll need access to your current and new environments — hosting, database, server, or mailbox access depending on scope. Once the migration is complete, we'll guide you through any final steps."),
     ],
-    closing_heading="Move Your Website Without the Stress",
-    closing_sub="Switching hosts or domains doesn’t have to be risky or time consuming. Quick, secure, and backed by a money-back guarantee.",
-    cta_label="Start My Website Migration",
+    closing_heading="Move It Without the Stress",
+    closing_sub="Switching hosts, upgrading a database, or relocating mail and software doesn't have to be risky or time consuming. Quick, secure, and backed by a money-back guarantee.",
+    cta_label="Start My Migration",
+    hero_stats=[
+        ("\U0001F69A", "800+", "Migrations Completed"),
+        ("⭐", "200+", "Five-Star Reviews"),
+        ("\U0001F4B0", "$149", "Starting Price"),
+        ("✅", "100%", "Money-Back Guarantee"),
+    ],
 )
 
 service_page(
-    slug="services-small-tasks.html",
-    eyebrow="Small Tasks",
-    title="WordPress Tasks Made Simple",
-    sub="Need quick WordPress edits or updates? We handle small website changes fast so you don’t have to.",
-    stat_line="10,000+ issues resolved · 200+ five-star reviews · Tasks from $49 · Money-back guarantee",
-    intro_heading="Need a One-Time WordPress Task?",
+    slug="services-website-repair-small-fixes.html",
+    eyebrow="Website Repair",
+    title="Website Repair & Small Fixes",
+    sub="Broken pages, plugin errors, white screens, or just a quick edit — we handle website repairs and small fixes fast so you don’t have to.",
+    stat_line="10,000+ issues resolved · 200+ five-star reviews · Fixes from $49 · Money-back guarantee",
+    intro_heading="Something Broken, or Just Need a Quick Change?",
     intro_paras=[
-        "If you need a quick update and don’t want to spend hours figuring it out yourself, this service is for you.",
-        "Our Small WordPress Tasks service is ideal for simple edits like content updates, image changes, layout tweaks, and small feature additions. Just tell us what you want changed and we’ll handle it.",
+        "Whether your site is throwing errors, showing a white screen, or crashing after an update, this service gets it diagnosed and fixed fast. If you just need a quick edit — text, images, layout — it's the same service, same flat-rate simplicity.",
+        "Tell us what's wrong or what you'd like changed. We repair genuine issues (plugin conflicts, broken layouts, crashes) and handle small tasks (content edits, image swaps, small feature additions) with the same fast turnaround and one free revision.",
     ],
     steps=[
-        ("Contact", "Tell us what edits, changes, or updates you need help with."),
-        ("Review Your Request", "We review your task and confirm details before getting started."),
-        ("Get to Work", "We complete the updates and confirm when everything’s done."),
+        ("Tell Us What's Wrong", "Send a repair request or task description — a broken feature, an error message, or just something you want changed."),
+        ("We Review & Confirm", "We diagnose the issue or confirm task details and scope before starting."),
+        ("Fixed & Confirmed", "We complete the fix or update and confirm everything's working before we close it out."),
     ],
     about_cards=[
-        ("\U0001F4DD", "Text Edits", "Need to update website text? We can add, edit, or replace content on your WordPress site quickly and accurately."),
-        ("\U0001F5BC️", "Image Updates", "We handle image swaps, gallery updates, and slider changes. Upload your files and we’ll take care of the rest."),
+        ("\U0001F50C", "Plugin Conflicts or Update Failures", "Errors or downtime after updates are common. We identify what caused the issue and repair it so updates stop breaking your site."),
+        ("\U0001F5BC️", "Theme Display or Design Issues", "Broken layouts, missing sections, or visual glitches restored so every page looks as it should."),
+        ("⚠️", "White Screens or 500 Errors", "If your site won't load or shows server errors, we find and fix what's blocking access."),
+        ("\U0001F4DD", "Text &amp; Content Edits", "Need to update website text? We add, edit, or replace content quickly and accurately."),
         ("\U0001F3A8", "Layout Tweaks", "Want to adjust spacing, fonts, colors, or layout? We make small design changes to improve how your site looks."),
-        ("✨", "New Features", "Need something added? We can install and configure simple features such as forms, feeds, or galleries."),
-        ("✅", "Final Review", "Once your task is complete, we’ll confirm everything is finished and make one revision if needed."),
-        ("\U0001F4CB", "List of Tasks", "Once you submit your request, we review what you need and follow up if anything needs clarification."),
+        ("✨", "Small Feature Additions", "Need something added? We install and configure simple features such as forms, feeds, or galleries."),
+        ("✅", "One Free Revision", "Once your fix or task is complete, we confirm everything is finished and make one revision if needed."),
+        ("\U0001F4CB", "Clear Scope Before We Start", "Once you submit your request, we review what you need and confirm scope and cost before getting started."),
     ],
     faq_items=[
-        ("How long do small WordPress tasks take?", "Most tasks are completed within two business days after approval. If you need something urgent, let us know when you submit your request."),
-        ("How many revisions are included?", "Each task includes one free revision to make sure everything looks right."),
-        ("How much does it cost to fix small WordPress issues?", "Pricing starts at $49 for most small tasks. We always confirm the cost before starting."),
-        ("Can I hire someone to fix specific WordPress edits like text or images?", "Yes. This service is designed for tasks like text updates, image changes, and small layout tweaks."),
-        ("Do you help with adding new features or plugins?", "Yes. We can add simple features such as forms, feeds, or galleries and make sure they work properly."),
-        ("Is this a one-time service or a subscription?", "This is a one-time, pay-as-you-go service. There are no subscriptions or ongoing fees."),
-        ("Can you help if I don’t know how to edit my WordPress site?", "Yes. Just tell us what you want changed and we’ll take care of it for you."),
-        ("What do you need to get started?", '<a href="contact.html">Submit a support request</a> and describe what you’d like updated. We’ll review your request, confirm the details, and get started.'),
+        ("What counts as a repair vs. a small task?", "A repair is something broken — an error, a crash, a layout issue. A small task is something you want changed — content, images, layout. Both are handled through this same service, at the same starting price."),
+        ("How long does it take?", "Most repairs and small tasks are completed within one to two business days after approval. Let us know if something is urgent."),
+        ("How much does it cost?", "Pricing starts at $49. We always confirm the exact cost before starting any work."),
+        ("How many revisions are included?", "Each request includes one free revision to make sure everything looks and works right."),
+        ("Is this a subscription?", "No. This is a one-time, pay-as-you-go service. There are no ongoing fees."),
+        ("Do you fix WooCommerce checkout or form issues?", "Yes. We inspect, test, and repair WooCommerce checkout problems and form errors so visitors can complete actions without issues."),
+        ("What do you need to get started?", '<a href="contact.html">Submit a support request</a> describing the issue or what you\'d like changed. We\'ll review, confirm scope, and get started.'),
     ],
-    closing_heading="Get Small WordPress Tasks Help Today",
-    closing_sub="From content updates and image edits to layout tweaks and small features, we provide fast and reliable WordPress task support so you can focus on running your business.",
-    cta_label="Start My Small Task",
+    closing_heading="Get It Fixed or Updated Today",
+    closing_sub="From broken pages and plugin errors to quick content edits, one fast, flat-rate service handles it all. Fixes start at $49 with a full money-back guarantee.",
+    cta_label="Start My Fix",
+    hero_stats=[
+        ("\U0001F527", "10,000+", "Issues Resolved"),
+        ("⭐", "200+", "Five-Star Reviews"),
+        ("\U0001F4B0", "$49", "Starting Price"),
+        ("✅", "100%", "Money-Back Guarantee"),
+    ],
 )
 
 service_page(
-    slug="services-devops-automation-cicd.html",
-    eyebrow="DevOps & Automation",
-    title="WordPress DevOps, Automation & CI/CD",
-    sub="Move away from manual, risky deployments toward a safe, repeatable WordPress workflow.",
-    stat_line="10,000+ issues resolved · 200+ five-star reviews · DevOps setup from $499 · Money-back guarantee",
-    intro_heading="Need DevOps & Automation for Your WordPress Site?",
+    slug="services-infrastructure-devops.html",
+    eyebrow="Infrastructure & DevOps",
+    title="Infrastructure & DevOps",
+    sub="Servers, networks, and deployment pipelines built and managed properly — staging environments, CI/CD, system administration, firewalls, and virtualization, all under one team.",
+    stat_line="Custom-scoped engagements · Free scoping call · Money-back guarantee on setup work",
+    intro_heading="Need Infrastructure You Can Actually Trust?",
     intro_paras=[
-        "If every deployment feels risky, updates get pushed straight to production, and you have no easy way to undo a bad change, your WordPress workflow needs a safer foundation.",
-        "Our DevOps service builds staging environments, automated deployment pipelines, and backup/rollback processes around your existing site — so changes ship safely and mistakes are easy to reverse.",
+        "If every deployment feels risky, your servers are managed ad hoc, or nobody's quite sure how your network and Active Directory are actually configured, your infrastructure needs a safer foundation.",
+        "This service covers the full stack: CI/CD and deployment automation, day-to-day system administration, network and firewall security, and virtualization/Active Directory setup — scoped and quoted based on what you actually need, not a one-size-fits-all package.",
     ],
     steps=[
-        ("Assess", "We review your current hosting, workflow, and tooling to see what's missing or risky."),
-        ("Build", "We set up staging environments, CI/CD pipelines, version control, and automated backups."),
-        ("Handover", "We test the full workflow with you and document it so your team can run it independently."),
+        ("Assess", "We review your current infrastructure, hosting, workflow, and tooling to see what's missing or risky."),
+        ("Build", "We set up staging environments, CI/CD pipelines, server administration, firewalls, and virtualization as scoped."),
+        ("Handover", "We test everything with you and document it so your team can run it independently — or we manage it ongoing."),
     ],
     about_cards=[
-        ("\U0001F5A5️", "Staging &amp; Production Setup", "A proper staging environment so changes are tested before they ever touch your live site."),
-        ("\U0001F501", "Automated Deployment Pipelines", "CI/CD pipelines that push tested changes to production automatically and consistently."),
-        ("\U0001F5C2️", "Version Control Workflows", "Git-based workflows for themes and plugins so every change is tracked and reversible."),
+        ("\U0001F5A5️", "Staging &amp; Production Setup", "A proper staging environment so changes are tested before they ever touch production."),
+        ("\U0001F501", "Automated Deployment Pipelines (CI/CD)", "Pipelines that push tested changes to production automatically and consistently."),
+        ("\U0001F5C2️", "Version Control Workflows", "Git-based workflows so every change is tracked and reversible."),
         ("\U0001F4BE", "Automated Backups &amp; Rollback", "Scheduled backups with a fast, tested rollback process if a deployment goes wrong."),
-        ("⚙️", "Scripted Server Configuration", "Repeatable, documented server setup so environments stay consistent and easy to rebuild."),
-        ("\U0001F514", "Deployment Monitoring &amp; Alerts", "Automated checks and alerts so you know immediately if a deployment causes an issue."),
+        ("\U0001F6E0️", "System Administration", "Ongoing or one-time server administration — patching, resource monitoring, routine maintenance across Linux and Windows Server."),
+        ("\U0001F525", "Network &amp; Firewall Security", "Firewall rules, network segmentation, and VPN configuration tailored to how your infrastructure is actually used."),
+        ("\U0001F5C3️", "Virtualization &amp; Active Directory", "VM setup and management, plus Active Directory domain, user, and group configuration for Windows-based environments."),
+        ("\U0001F514", "Monitoring &amp; Alerts", "Automated checks and alerts so you know immediately if a deployment or system issue needs attention."),
     ],
     faq_items=[
-        ("Do I need a developer on my team to use this?", "No. We set up the workflow and document it clearly enough for a non-technical site owner to follow, though it's most useful if you or your team make regular changes."),
-        ("Will this work with my current host?", "In most cases, yes — we work with your existing hosting provider. If your host doesn't support the tooling required, we'll flag that upfront before starting."),
-        ("How long does setup take?", "Most DevOps setups are completed within 3-5 business days, depending on the complexity of your current site."),
-        ("What if something breaks after setup?", "That's the point of the rollback process we build — you can revert to the last known-good version quickly instead of troubleshooting live."),
-        ("What access do you need?", 'We\'ll need hosting access, WordPress admin access, and access to any existing repository. <a href="contact.html">Open a support ticket</a> and we\'ll guide you through it.'),
+        ("Do I need an in-house developer or IT team?", "No. We set up the workflow and document it clearly enough for a non-technical owner to follow, though it's most useful if you or your team make regular changes."),
+        ("Will this work with my current hosting or servers?", "In most cases, yes — we work with your existing infrastructure. If something doesn't support the tooling required, we'll flag that upfront before starting."),
+        ("There's no fixed price here — how does pricing work?", "Infrastructure work varies too much for a flat rate to be honest. We scope your specific needs on a free call, then send a clear, itemized quote before any work begins."),
+        ("What if something breaks after setup?", "That's the point of the rollback and monitoring we build — you can revert to a known-good state quickly instead of troubleshooting live."),
+        ("Do you manage this ongoing, or just set it up once?", "Both are available. Some clients want a one-time setup handed off to their team; others prefer we manage it on an ongoing basis."),
+        ("What access do you need?", 'We\'ll need hosting/server access and access to any existing repository, network, or directory service depending on scope. <a href="contact.html">Open a support ticket</a> and we\'ll guide you through it.'),
     ],
-    closing_heading="Ready for a Safer WordPress Workflow?",
-    closing_sub="Stop pushing changes straight to production. Let's build a staging, deployment, and rollback workflow you can trust.",
-    cta_label="Start My DevOps Setup",
-)
-
-service_page(
-    slug="services-cybersecurity-compliance.html",
-    eyebrow="Cybersecurity",
-    title="WordPress Cybersecurity & Compliance",
-    sub="Deeper security hardening and compliance support for eCommerce, membership, and business-critical WordPress sites.",
-    stat_line="10,000+ issues resolved · 200+ five-star reviews · Security audits from $349 · Money-back guarantee",
-    intro_heading="Need Advanced Security or Compliance Support?",
-    intro_paras=[
-        "If your WordPress site handles logins, payments, or customer data, basic security isn't enough — you need proactive hardening, monitoring, and a plan for when something goes wrong.",
-        "This service goes beyond our Malware Removal cleanup: it's about preventing incidents before they happen and meeting the compliance expectations your customers and partners hold you to.",
+    closing_heading="Ready for Infrastructure You Can Trust?",
+    closing_sub="From CI/CD pipelines to firewalls and Active Directory, we scope exactly what your infrastructure needs on a free call, then send a clear quote.",
+    cta_label="Get a Custom Quote",
+    hero_stats=[
+        ("\U0001F5A5️", "Custom", "Scoped Engagements"),
+        ("\U0001F4DE", "Free", "Scoping Call"),
+        ("\U0001F4B0", "Money-Back", "Guarantee on Setup"),
+        ("✅", "No", "Long-Term Contract"),
     ],
-    steps=[
-        ("Audit", "We run a full security audit and vulnerability assessment across your site, plugins, and hosting."),
-        ("Harden", "We configure firewalls, access controls, and compliance-aligned data handling for your site."),
-        ("Monitor", "We put ongoing monitoring and reporting in place so new risks are caught early."),
-    ],
-    about_cards=[
-        ("\U0001F50D", "Security Audits &amp; Vulnerability Assessments", "A full review of your site, plugins, and server configuration to identify weaknesses before attackers do."),
-        ("\U0001F525", "Advanced Firewall &amp; Access Control", "Firewall rules and access-control configuration tailored to how your site is actually used."),
-        ("\U0001F4C4", "Data Protection &amp; Compliance Guidance", "Guidance on aligning your site's data handling with common compliance expectations (e.g. GDPR-style requirements)."),
-        ("\U0001F6A8", "Incident Response Planning", "A clear, documented plan for what happens if your site is compromised, so there's no scrambling."),
-        ("\U0001F9EA", "Penetration-Style Security Testing", "Controlled testing that simulates real attack methods to confirm your defenses actually hold up."),
-        ("\U0001F4CA", "Ongoing Compliance Monitoring", "Regular reporting so you can show — not just claim — that your security posture is being maintained."),
-    ],
-    faq_items=[
-        ("How is this different from Malware Removal?", "Malware Removal cleans up an active infection. This service is proactive — hardening, auditing, and monitoring your site before an incident happens."),
-        ("Do you guarantee compliance with specific regulations?", "We provide guidance aligned with common data-protection practices, but formal legal compliance certification should be confirmed with a qualified compliance professional."),
-        ("How often should security audits be repeated?", "We recommend a full audit at least quarterly for sites handling payments or customer data, with continuous monitoring in between."),
-        ("Do you work with eCommerce and membership sites?", "Yes — this service is built specifically for sites handling logins, payments, and sensitive customer data."),
-        ("What access do you need?", 'We\'ll need WordPress admin access and hosting access. <a href="contact.html">Open a support ticket</a> and our team will guide you through it.'),
-    ],
-    closing_heading="Protect What Your Business Depends On",
-    closing_sub="Don't wait for an incident to take security seriously. Get a full audit, hardened defenses, and ongoing monitoring in place.",
-    cta_label="Start My Security Audit",
-)
-
-service_page(
-    slug="services-website-development.html",
-    eyebrow="Development",
-    title="Professional WordPress Development Services",
-    sub="Improve your WordPress website with expert development help and no long-term commitments.",
-    stat_line="10,000+ issues resolved · 200+ five-star reviews · Development from $399 · Trusted by 1,000+ site owners",
-    intro_heading="Need One-Time WordPress Development?",
-    intro_paras=[
-        "If you want to improve your website with new features, layout updates, or integrations, our one-time WordPress development sessions are designed to help you make meaningful progress without ongoing contracts.",
-        "Hire an experienced WordPress developer for a half-day or full day to complete focused development work that improves how your site looks, works, or connects with other tools.",
-    ],
-    steps=[
-        ("Contact", "Share what you'd like to build, improve, or update on your WordPress site."),
-        ("Review", "We review your request, confirm what's achievable, and outline what will be delivered."),
-        ("Deliver", "We complete the work and confirm when everything is ready."),
-    ],
-    about_cards=[
-        ("⚙️", "Custom Features", "We build tailored functionality such as booking tools, user dashboards, or WooCommerce enhancements to support your website's needs."),
-        ("\U0001F3A8", "Design Updates", "We improve layouts, styling, and page structure to create a cleaner, more effective user experience."),
-        ("\U0001F50C", "Third-Party Integrations", "We connect your WordPress site with payment systems, CRMs, marketing tools, and other third-party services."),
-        ("\U0001F4C4", "Content Enhancements", "We improve how content is displayed to make it clearer, more engaging, and easier for visitors to use."),
-        ("\U0001F4BB", "Advanced Development", "We handle complex WordPress development tasks, custom code, and advanced functionality with care and precision."),
-        ("\U0001F4A1", "Strategic Planning", "We provide clear guidance during your development session to ensure the work completed delivers real value."),
-    ],
-    faq_items=[
-        ("What can you develop for my website?", "We can add custom features, improve layouts, enhance functionality, and integrate third-party tools based on your requirements."),
-        ("Can I choose how my development time is used?", "Yes. We focus on your top priorities and confirm what can be delivered within your booked development session."),
-        ("What if I need more time later?", "You can book additional development time whenever you need it. There are no ongoing commitments."),
-        ("How do I know how much time is used?", "We provide a clear summary of the work completed during your development session."),
-        ("Can I purchase a one-time development session?", "Yes. One-time WordPress development sessions start at $399 for a half-day or $798 for a full day."),
-        ("How do I get started?", 'Open a <a href="contact.html">support ticket</a> and share your WordPress login and hosting details. We\'ll review your request and get started.'),
-    ],
-    closing_heading="Ready to Build Something Better?",
-    closing_sub="Whether you need custom features, layout updates, or integrations, our WordPress development services help you improve your website without ongoing commitments. Book a half-day or full-day session and get expert help focused on real results.",
-    cta_label="Start My Development",
-    badges=["Custom Features", "Expert Planning", "Professional Updates", "Guaranteed Availability"],
 )
 
 # --------------------------------------------------------------------------
-# WORDPRESS REDESIGN — tiered pricing page (Rebuild / Redesign / New Website)
+# REDESIGN & DEVELOPMENT — tiered pricing page (Rebuild / Redesign / New
+# Website) plus one-time development sessions, merged into one service.
 # --------------------------------------------------------------------------
 
 redesign_body = service_hero(
-    "Redesign & Rebuild",
-    "WordPress Redesign Services Built for Growth",
-    "Redesign your WordPress website with a modern, fast, conversion-focused foundation.",
-    "10,000+ issues resolved · 200+ five-star reviews · Projects from $5,995 · Trusted by 1,000+ site owners",
+    "Redesign & Development",
+    "Redesign, Rebuild & Custom Development",
+    "Modernize your website with a redesign or rebuild, or book a one-time development session for new features and integrations.",
+    "10,000+ issues resolved · 200+ five-star reviews · Projects from $1,995 · Trusted by 1,000+ site owners",
     "Start My Website Project",
+    hero_stats=[
+        ("\U0001F527", "10,000+", "Issues Resolved"),
+        ("⭐", "200+", "Five-Star Reviews"),
+        ("\U0001F4B0", "$1,995", "Starting Price"),
+        ("\U0001F91D", "1,000+", "Site Owners Trust Us"),
+    ],
 )
 
 redesign_body += """
@@ -750,6 +815,28 @@ redesign_body += """
 </section>
 """
 
+redesign_body += """
+<section class="section">
+  <div class="container" style="max-width:820px;">
+    <h2 class="text-center">Just Need Development Work, Not a Full Redesign?</h2>
+    <p class="text-center">If you want new features, layout updates, or integrations without a full rebuild, book a one-time development session instead — no ongoing contract required.</p>
+  </div>
+</section>
+"""
+
+redesign_body += feature_cards(
+    "One-Time Development Sessions",
+    "Hire an experienced developer for a half-day or full day to complete focused work — starting at $399 for a half-day or $798 for a full day.",
+    [
+        ("⚙️", "Custom Features", "We build tailored functionality such as booking tools, user dashboards, or e-commerce enhancements to support your website's needs."),
+        ("\U0001F3A8", "Design Updates", "We improve layouts, styling, and page structure to create a cleaner, more effective user experience."),
+        ("\U0001F50C", "Third-Party Integrations", "We connect your website with payment systems, CRMs, marketing tools, and other third-party services."),
+        ("\U0001F4C4", "Content Enhancements", "We improve how content is displayed to make it clearer, more engaging, and easier for visitors to use."),
+        ("\U0001F4BB", "Advanced Development", "We handle complex development tasks, custom code, and advanced functionality with care and precision."),
+        ("\U0001F4A1", "Strategic Planning", "We provide clear guidance during your development session to ensure the work completed delivers real value."),
+    ],
+)
+
 redesign_body += three_steps(
     "Our WordPress Redesign Process",
     "We follow a clear, structured process so you always know what's happening and what comes next.",
@@ -766,7 +853,7 @@ redesign_body += cta_banner(
     "Start My Website Project",
 )
 
-page("services-redesign.html", "WordPress Redesign Services", "Redesign, rebuild, or launch a new WordPress website with a modern, conversion-focused foundation.", redesign_body)
+page("services-redesign-development.html", "Redesign & Development Services", "Redesign, rebuild, or launch a new website with a modern, conversion-focused foundation — or book a one-time development session.", redesign_body, og_image="assets/og-redesign-development.png")
 
 # --------------------------------------------------------------------------
 # STANDALONE MAINTENANCE PLAN LANDING PAGE
@@ -778,6 +865,16 @@ maint_body = service_hero(
     "Keep your WordPress website updated, secure, and running smoothly — without lifting a finger.",
     "10,000+ issues resolved · 200+ five-star reviews · Maintenance from $89/month · 30-day money-back guarantee",
     "Discuss My Site",
+    hero_checklist=("SLA & Service Commitment", [
+        "Fast Response Times",
+        "Priority-Based Support",
+        "Scheduled Maintenance",
+        "Security &amp; Backup Monitoring",
+        "Transparent Communication",
+        "Monthly Service Reports",
+        "Emergency Support Available",
+        "Clear Escalation Process",
+    ]),
 )
 
 maint_body += """
@@ -840,6 +937,109 @@ maint_body += cta_banner(
 page("maintenance-plan.html", "WordPress Maintenance Plan", "Ongoing WordPress maintenance — updates, backups, monitoring, and small fixes from $89/month.", maint_body)
 
 # --------------------------------------------------------------------------
+# SAAS & SYSTEMS INTEGRATION — new service line. Copy below is a first
+# draft to get the page live; replace with real platform names, specific
+# case studies, and any certifications/compliance credentials before
+# launch, especially for the Core Banking & Payment Systems section, which
+# is a very different (and more trust-sensitive) buyer than the SaaS/CRM
+# side and should eventually get its own proof points.
+# --------------------------------------------------------------------------
+
+service_page(
+    slug="services-saas-systems-integration.html",
+    eyebrow="SaaS & Integration",
+    title="SaaS & Systems Integration",
+    sub="A full business solution built on the Zoho Suite — CRM, Creator, Forms, Invoice, Meeting, and workflow automation — plus payment gateway integration and, where needed, core banking systems.",
+    stat_line="Custom-scoped engagements · Free scoping call · Confidential handling of sensitive integrations",
+    intro_heading="Your Tools Should Talk to Each Other",
+    intro_paras=[
+        "If your team is copying data between systems by hand, chasing invoices manually, or running sales, support, and billing out of separate spreadsheets, that's time and accuracy lost every single day.",
+        "We set up and connect the tools that actually run your business day to day — Zoho CRM, Creator, Forms, Invoice, Meeting, and Flow for workflow automation — plus payment gateway integrations and, for clients who need it, core banking systems. These are different kinds of work with different stakes, and we scope and quote them separately.",
+    ],
+    steps=[
+        ("Map", "We map your current tools, data flows, and the gaps or manual steps costing you time."),
+        ("Connect", "We configure and connect the platforms — Zoho apps, other SaaS tools, or banking/payment systems as scoped — with proper authentication and data handling."),
+        ("Verify", "We test data flows end-to-end and hand over clear documentation of what's connected and how."),
+    ],
+    about_cards=[
+        ("\U0001F4C7", "Zoho CRM Setup &amp; Customization", "Pipelines, lead tracking, and sales automation configured and customized to match how your team actually sells."),
+        ("\U0001F9F1", "Zoho Creator (Custom Apps)", "Purpose-built internal apps and databases for workflows that off-the-shelf software doesn't cover."),
+        ("\U0001F4DD", "Zoho Forms &amp; Workflow Automation", "Forms that feed straight into your CRM or apps, with Zoho Flow automating the steps in between."),
+        ("\U0001F9FE", "Zoho Invoice &amp; Billing", "Invoicing, recurring billing, and payment tracking set up and connected to the rest of your tools."),
+        ("\U0001F4F9", "Zoho Meeting Setup", "Video meetings and webinars configured and integrated into your existing scheduling and CRM workflow."),
+        ("\U0001F4B3", "Payment Gateway Integration", "Connecting payment gateways and processors to your website or systems, with careful attention to security and reconciliation."),
+        ("\U0001F517", "SaaS-to-SaaS Integration &amp; Data Sync", "Connecting the platforms you already use so data moves automatically instead of being re-entered by hand."),
+        ("\U0001F3E6", "Core Banking Systems Integration", "Integration work with core banking platforms for financial institutions — scoped individually given the sensitivity and compliance requirements involved."),
+        ("\U0001F510", "Secure, Confidential Handling", "NDAs and confidentiality as standard for any engagement touching financial or customer-sensitive systems."),
+    ],
+    faq_items=[
+        ("Do you only work with Zoho?", "Zoho is our primary SaaS suite — CRM, Creator, Forms, Invoice, Meeting, and Flow — but we work with other CRM and business SaaS tools too. Tell us what you're using or considering."),
+        ("Can you set up a complete business system, not just one app?", "Yes — that's the point of this service. We connect CRM, forms, billing, meetings, and workflow automation into one working system instead of separate disconnected tools."),
+        ("What's the difference between the SaaS side and the banking side of this service?", "SaaS/CRM integration is general business tooling — most companies need it. Core banking and payment systems integration is specialized, higher-stakes work for financial institutions or businesses processing payments at scale. We scope and price these very differently."),
+        ("Do you sign NDAs?", "Yes, standard practice for any integration touching financial data, customer PII, or proprietary systems."),
+        ("How is this priced?", "Scoped per engagement — a Zoho/CRM setup and a core banking integration have very different levels of effort and risk, so we quote after understanding what you actually need."),
+        ("What do you need to get started?", 'Tell us which systems need to talk to each other and what\'s not working today. <a href="contact.html">Open a support ticket</a> and we\'ll schedule a scoping call.'),
+    ],
+    closing_heading="Stop Moving Data by Hand",
+    closing_sub="Whether it's a CRM setup or a core banking integration, we'll scope exactly what's needed on a free call, then send a clear quote.",
+    cta_label="Get a Custom Quote",
+    hero_stats=[
+        ("\U0001F50C", "Custom", "Scoped Engagements"),
+        ("\U0001F4DE", "Free", "Scoping Call"),
+        ("\U0001F510", "Confidential", "Integration Handling"),
+        ("✅", "No", "Long-Term Contract"),
+    ],
+)
+
+# --------------------------------------------------------------------------
+# AI DEVELOPMENT & INTEGRATION — new service line. First-draft copy;
+# replace with specific tools/models used and real project examples
+# before launch.
+# --------------------------------------------------------------------------
+
+service_page(
+    slug="services-ai-development-integration.html",
+    eyebrow="AI Development",
+    title="AI Development & Integration",
+    sub="Custom chatbots, automation, and AI features built into your website or business systems — practical AI, not hype.",
+    stat_line="Custom-scoped engagements · Free scoping call · Money-back guarantee on setup work",
+    intro_heading="Where Does AI Actually Save You Time?",
+    intro_paras=[
+        "Most businesses don't need \"AI\" in the abstract — they need one or two specific, repetitive tasks handled automatically: answering common customer questions, summarizing documents, drafting responses, sorting requests.",
+        "We build and integrate AI features scoped to a real workflow — a chatbot on your website, an internal automation, or a custom integration with an AI API — rather than bolting on a generic tool that doesn't fit how you work.",
+    ],
+    steps=[
+        ("Identify", "We find the specific task or workflow where AI will actually save time, not just sound impressive."),
+        ("Build", "We build and integrate the chatbot, automation, or AI feature into your website or existing systems."),
+        ("Refine", "We test with real inputs, tune it based on results, and document how it works and how to maintain it."),
+    ],
+    about_cards=[
+        ("\U0001F916", "Website Chatbots", "Custom chatbots trained on your business content to answer visitor and customer questions automatically."),
+        ("\U0001F504", "Workflow Automation", "AI-assisted automation for repetitive tasks — sorting requests, drafting responses, summarizing documents."),
+        ("\U0001F50C", "AI API Integration", "Integrating AI models and APIs into your existing website, CRM, or internal tools."),
+        ("\U0001F4DD", "Content &amp; Document AI", "Tools for summarizing, drafting, or processing documents and content at scale."),
+        ("\U0001F4CA", "Custom AI Features", "Purpose-built AI functionality for your specific product or business, not a generic off-the-shelf plugin."),
+        ("\U0001F6E1️", "Responsible Integration", "Clear handling of data privacy and model limitations, so you know what the system can and can't be trusted to do."),
+    ],
+    faq_items=[
+        ("Do I need my own AI model?", "No. We typically integrate existing AI APIs and models rather than training one from scratch, which keeps cost and complexity down for most business use cases."),
+        ("Will this actually save us time, or is it a gimmick?", "We scope against a specific workflow first — if AI isn't the right tool for what you're trying to solve, we'll tell you before building anything."),
+        ("Can you add a chatbot to my existing website?", "Yes, including WordPress sites we've already built or repaired for you."),
+        ("How is this priced?", "Scoped per project depending on complexity — a simple chatbot and a custom workflow integration are very different amounts of work."),
+        ("What do you need to get started?", 'Tell us what task or workflow you want automated. <a href="contact.html">Open a support ticket</a> and we\'ll schedule a scoping call.'),
+    ],
+    closing_heading="Let's Find the AI That Actually Helps",
+    closing_sub="Practical AI features scoped to a real workflow, not a generic bolt-on. We'll scope it on a free call, then send a clear quote.",
+    cta_label="Get a Custom Quote",
+    hero_stats=[
+        ("\U0001F916", "Custom", "Scoped Engagements"),
+        ("\U0001F4DE", "Free", "Scoping Call"),
+        ("\U0001F4B0", "Money-Back", "Guarantee on Setup"),
+        ("✅", "No", "Long-Term Contract"),
+    ],
+)
+
+# --------------------------------------------------------------------------
 # HOME PAGE
 # --------------------------------------------------------------------------
 
@@ -848,13 +1048,13 @@ home_body = f"""
   <div class="container">
     <div class="hero-grid">
       <div>
-        <span class="eyebrow" style="background:rgba(255,255,255,0.14);color:#ffe1ad;">WordPress Experts</span>
-        <h1>Fast WordPress Repair &amp; Support by Experts</h1>
-        <p class="lead">We fix broken, hacked, and slow WordPress websites fast so you can get back online without the stress.</p>
+        <span class="eyebrow" style="background:rgba(255,255,255,0.14);color:#ffe1ad;">IT &amp; Digital Solutions</span>
+        <h1>Website Repair, Infrastructure &amp; Custom Development — Handled by Experts</h1>
+        <p class="lead">From fixing a broken website to running your infrastructure, integrating your systems, or building AI into your workflow — one team, start to finish.</p>
         <p class="lead" style="font-size:0.95rem;color:#b9cfe6;">Fixes from $49. No contracts. Expert, reliable support.</p>
         <div class="hero-cta">
-          <a href="{{ROOT}}contact.html" class="btn btn-primary btn-lg">Fix My Site</a>
-          <a href="{{ROOT}}care-plans.html" class="btn btn-outline btn-lg">View Care Plans</a>
+          <a href="{{ROOT}}services.html" class="btn btn-primary btn-lg">Explore Services</a>
+          <a href="{{ROOT}}contact.html" class="btn btn-outline btn-lg">Get a Free Quote</a>
         </div>
       </div>
       <div class="hero-art">
@@ -871,39 +1071,39 @@ home_body = f"""
           </svg>
           <div class="orbit-hub"><span>\U0001F6E0️</span></div>
           <div class="orbit-node" style="top:10%;left:50%;">
-            <span class="orbit-icon">\U0001F41B</span>
-            <span class="orbit-label">Malware Removal</span>
+            <span class="orbit-icon">\U0001F527</span>
+            <span class="orbit-label">Repair &amp; Fixes</span>
           </div>
           <div class="orbit-node" style="top:22%;left:78%;">
-            <span class="orbit-icon">\U0001F680</span>
-            <span class="orbit-label">Speed Optimization</span>
+            <span class="orbit-icon">\U0001F6E1️</span>
+            <span class="orbit-label">Security</span>
           </div>
           <div class="orbit-node" style="top:50%;left:90%;">
+            <span class="orbit-icon">\U0001F680</span>
+            <span class="orbit-label">Speed</span>
+          </div>
+          <div class="orbit-node" style="top:78%;left:78%;">
             <span class="orbit-icon">\U0001F69A</span>
             <span class="orbit-label">Migration</span>
           </div>
-          <div class="orbit-node" style="top:78%;left:78%;">
-            <span class="orbit-icon">\U0001F4DD</span>
-            <span class="orbit-label">Small Tasks</span>
-          </div>
           <div class="orbit-node" style="top:90%;left:50%;">
-            <span class="orbit-icon">\U0001F501</span>
-            <span class="orbit-label">DevOps &amp; CI/CD</span>
+            <span class="orbit-icon">\U0001F3A8</span>
+            <span class="orbit-label">Redesign &amp; Dev</span>
           </div>
           <div class="orbit-node" style="top:78%;left:22%;">
-            <span class="orbit-icon">\U0001F6E1️</span>
-            <span class="orbit-label">Cybersecurity</span>
+            <span class="orbit-icon">\U0001F5A5️</span>
+            <span class="orbit-label">Infrastructure</span>
           </div>
           <div class="orbit-node" style="top:50%;left:10%;">
-            <span class="orbit-icon">\U0001F4BB</span>
-            <span class="orbit-label">Website Dev</span>
+            <span class="orbit-icon">\U0001F50C</span>
+            <span class="orbit-label">SaaS &amp; Integration</span>
           </div>
           <div class="orbit-node" style="top:22%;left:22%;">
-            <span class="orbit-icon">\U0001F3A8</span>
-            <span class="orbit-label">Redesign</span>
+            <span class="orbit-icon">\U0001F916</span>
+            <span class="orbit-label">AI Development</span>
           </div>
         </div>
-        <p style="color:#dbe8f5;margin-top:14px;font-size:0.9rem;">WordPress repair, security &amp; performance — handled for you.</p>
+        <p style="color:#dbe8f5;margin-top:14px;font-size:0.9rem;">Web, infrastructure &amp; AI — handled for you, end to end.</p>
       </div>
     </div>
   </div>
@@ -920,8 +1120,8 @@ home_body = f"""
   <div class="container">
     <div class="section-head">
       <span class="eyebrow">Is Your Website Broken, Hacked, or Slow?</span>
-      <h2>We Repair WordPress Sites Every Day</h2>
-      <p>If you've searched "fix my website" or "WordPress website repair," you're in the right place. Whether your site is down or just not working as it should, we'll find the cause and fix it fast so everything runs smoothly again.</p>
+      <h2>We Repair Websites Every Day — Then Handle Whatever Comes Next</h2>
+      <p>If you've searched "fix my website" or "website repair," you're in the right place. Whether your site is down or just not working as it should, we'll find the cause and fix it fast so everything runs smoothly again — and if you need more (security, infrastructure, integrations, AI), we handle that too.</p>
     </div>
     <ul class="checklist grid grid-3" style="max-width:820px;margin:0 auto;">
       <li>Broken pages, plugin errors, and theme display issues</li>
@@ -961,68 +1161,64 @@ home_body += f"""
   <div class="container">
     <div class="section-head">
       <h2>Our Services</h2>
-      <p>One-time fixes for the most common WordPress problems, or ongoing care plans if you'd rather not think about it at all.</p>
+      <p>One-time fixes and project work for the most common needs, or ongoing care plans if you'd rather not think about it at all.</p>
     </div>
     <div class="grid grid-4">
       <div class="card">
         <div class="icon">\U0001F527</div>
-        <h3>Website Repair</h3>
-        <p>Broken pages, plugin errors, white screens, and crashes — diagnosed and fixed fast.</p>
+        <h3>Website Repair &amp; Small Fixes</h3>
+        <p>Broken pages, plugin errors, white screens, or a quick edit — diagnosed and fixed fast.</p>
         <span class="price">From $49</span>
-        <a href="{{ROOT}}contact.html" class="card-link">Get a quote →</a>
+        <a href="{{ROOT}}services-website-repair-small-fixes.html" class="card-link">Learn more →</a>
       </div>
       <div class="card">
-        <div class="icon">\U0001F41B</div>
-        <h3>Malware Removal</h3>
-        <p>Full malware scan, cleanup, core file check, and security hardening.</p>
+        <div class="icon">\U0001F6E1️</div>
+        <h3>Malware Removal &amp; Security</h3>
+        <p>Full malware scan, cleanup, core file check, and security hardening in one service.</p>
         <span class="price">From $199</span>
-        <a href="{{ROOT}}services-malware-removal.html" class="card-link">Learn more →</a>
+        <a href="{{ROOT}}services-malware-removal-security-hardening.html" class="card-link">Learn more →</a>
       </div>
       <div class="card">
         <div class="icon">\U0001F680</div>
         <h3>Speed Optimization</h3>
-        <p>Caching, database cleanup, image compression, and plugin audits.</p>
+        <p>Caching, database cleanup, image compression, and Linux/Windows server tuning.</p>
         <span class="price">From $229</span>
         <a href="{{ROOT}}services-speed-optimization.html" class="card-link">Learn more →</a>
       </div>
       <div class="card">
         <div class="icon">\U0001F69A</div>
         <h3>Migration</h3>
-        <p>Move hosts or domains with a full backup, transfer, and reconfiguration.</p>
+        <p>Website, database, software, or mail migrations with a full backup and reconfiguration.</p>
         <span class="price">From $149</span>
         <a href="{{ROOT}}services-migration.html" class="card-link">Learn more →</a>
       </div>
       <div class="card">
-        <div class="icon">\U0001F4DD</div>
-        <h3>Small Tasks</h3>
-        <p>Quick text edits, image swaps, layout tweaks, and small feature additions.</p>
-        <span class="price">From $49</span>
-        <a href="{{ROOT}}services-small-tasks.html" class="card-link">Learn more →</a>
-      </div>
-      <div class="card">
-        <div class="icon">\U0001F501</div>
-        <h3>DevOps, Automation &amp; CI/CD<span class="badge-soon">Details soon</span></h3>
-        <p>Deployment pipelines, staging environments, and automated workflows.</p>
-        <a href="{{ROOT}}services-devops-automation-cicd.html" class="card-link">Learn more →</a>
-      </div>
-      <div class="card">
-        <div class="icon">\U0001F6E1️</div>
-        <h3>Cybersecurity &amp; Compliance<span class="badge-soon">Details soon</span></h3>
-        <p>Security hardening, audits, and compliance support for sensitive sites.</p>
-        <a href="{{ROOT}}services-cybersecurity-compliance.html" class="card-link">Learn more →</a>
-      </div>
-      <div class="card">
-        <div class="icon">\U0001F4BB</div>
-        <h3>Website Development<span class="badge-soon">Details soon</span></h3>
-        <p>Custom development, integrations, and full WordPress builds.</p>
-        <a href="{{ROOT}}services-website-development.html" class="card-link">Learn more →</a>
-      </div>
-      <div class="card">
         <div class="icon">\U0001F3A8</div>
-        <h3>Redesign</h3>
-        <p>Rebuild, redesign, or fully rebuild your WordPress site on a modern foundation.</p>
+        <h3>Redesign &amp; Development</h3>
+        <p>Rebuild, redesign, or launch a new site — or book a one-time development session.</p>
         <span class="price">From $1,995</span>
-        <a href="{{ROOT}}services-redesign.html" class="card-link">Learn more →</a>
+        <a href="{{ROOT}}services-redesign-development.html" class="card-link">Learn more →</a>
+      </div>
+      <div class="card">
+        <div class="icon">\U0001F5A5️</div>
+        <h3>Infrastructure &amp; DevOps</h3>
+        <p>CI/CD, system administration, network &amp; firewall security, and virtualization/AD.</p>
+        <span class="price price-quote">Custom Quote</span>
+        <a href="{{ROOT}}services-infrastructure-devops.html" class="card-link">Learn more →</a>
+      </div>
+      <div class="card">
+        <div class="icon">\U0001F50C</div>
+        <h3>SaaS &amp; Systems Integration</h3>
+        <p>Zoho/SaaS setup and integration, plus core banking &amp; payment systems work.</p>
+        <span class="price price-quote">Custom Quote</span>
+        <a href="{{ROOT}}services-saas-systems-integration.html" class="card-link">Learn more →</a>
+      </div>
+      <div class="card">
+        <div class="icon">\U0001F916</div>
+        <h3>AI Development &amp; Integration</h3>
+        <p>Custom chatbots, workflow automation, and AI features built into your systems.</p>
+        <span class="price price-quote">Custom Quote</span>
+        <a href="{{ROOT}}services-ai-development-integration.html" class="card-link">Learn more →</a>
       </div>
     </div>
   </div>
@@ -1090,12 +1286,12 @@ home_body += f"""
 """
 
 home_body += cta_banner(
-    "Fix Your Website Today",
-    "We handle one-time website repairs, malware removal, and speed fixes for WordPress websites. Fast turnaround. No contracts. Fixes start at $49 with a full money-back guarantee.",
-    "Fix My Site",
+    "Whatever It Is, Let's Fix It or Build It",
+    "One-time website repairs and security hardening, ongoing infrastructure, systems integration, and AI development — all under one team. Fast turnaround. No long-term contracts required. Fixes start at $49 with a full money-back guarantee.",
+    "Get a Free Quote",
 )
 
-page("index.html", "Fast WordPress Website Repair", "We fix broken, hacked, and slow WordPress websites fast so you can get back online without the stress.", home_body)
+page("index.html", "IT, Web & Infrastructure Solutions", "We fix broken, hacked, and slow websites, run infrastructure and DevOps, integrate SaaS and banking systems, and build AI features — one team, start to finish.", home_body)
 
 # --------------------------------------------------------------------------
 # SERVICES OVERVIEW PAGE
@@ -1105,8 +1301,8 @@ services_body = f"""
 <section class="page-hero">
   <div class="container">
     <div class="breadcrumb"><a href="{{ROOT}}index.html">Home</a> / Services</div>
-    <h1>WordPress Repair &amp; Support Services</h1>
-    <p style="max-width:640px;">One-time, no-contract services for the most common WordPress problems. Pick what you need, or send us a repair request and we'll diagnose it for you.</p>
+    <h1>IT, Web &amp; Infrastructure Services</h1>
+    <p style="max-width:640px;">From one-time website repairs to infrastructure, integrations, and AI development. Pick what you need, or send us a request and we'll diagnose it or scope it for you.</p>
   </div>
 </section>
 
@@ -1115,71 +1311,67 @@ services_body = f"""
     <div class="grid grid-3">
       <div class="card">
         <div class="icon">\U0001F527</div>
-        <h3>Website Repair</h3>
-        <p>Broken pages, plugin errors, white screens, and site crashes — diagnosed and fixed fast.</p>
+        <h3>Website Repair &amp; Small Fixes</h3>
+        <p>Broken pages, plugin errors, white screens, and site crashes — diagnosed and fixed fast, plus quick edits and small feature additions.</p>
         <span class="price">From $49</span>
-        <a href="{{ROOT}}contact.html" class="card-link">Request a repair →</a>
+        <a href="{{ROOT}}services-website-repair-small-fixes.html" class="card-link">Learn more →</a>
       </div>
       <div class="card">
-        <div class="icon">\U0001F41B</div>
-        <h3>Malware Removal</h3>
-        <p>Full scan, malware cleanup, core file check, blacklist removal, and security hardening.</p>
+        <div class="icon">\U0001F6E1️</div>
+        <h3>Malware Removal &amp; Security Hardening</h3>
+        <p>Full scan, malware cleanup, core file check, blacklist removal, and proactive security hardening.</p>
         <span class="price">From $199</span>
-        <a href="{{ROOT}}services-malware-removal.html" class="card-link">Learn more →</a>
+        <a href="{{ROOT}}services-malware-removal-security-hardening.html" class="card-link">Learn more →</a>
       </div>
       <div class="card">
         <div class="icon">\U0001F680</div>
         <h3>Speed Optimization</h3>
-        <p>Caching, database cleanup, image compression, plugin audits, and bad-request cleanup.</p>
+        <p>Caching, database cleanup, image compression, plugin audits, and Linux/Windows server tuning.</p>
         <span class="price">From $229</span>
         <a href="{{ROOT}}services-speed-optimization.html" class="card-link">Learn more →</a>
       </div>
       <div class="card">
         <div class="icon">\U0001F69A</div>
         <h3>Migration</h3>
-        <p>Zero-downtime WordPress migration between hosts or domains, backup included.</p>
+        <p>Zero-downtime website, database, software, or mail-server migration, backup included.</p>
         <span class="price">From $149</span>
         <a href="{{ROOT}}services-migration.html" class="card-link">Learn more →</a>
       </div>
       <div class="card">
-        <div class="icon">\U0001F4DD</div>
-        <h3>Small Tasks</h3>
-        <p>Quick text edits, image swaps, layout tweaks, and small feature additions.</p>
-        <span class="price">From $49</span>
-        <a href="{{ROOT}}services-small-tasks.html" class="card-link">Learn more →</a>
-      </div>
-      <div class="card">
-        <div class="icon">\U0001F501</div>
-        <h3>DevOps, Automation &amp; CI/CD<span class="badge-soon">Details soon</span></h3>
-        <p>Deployment pipelines, staging environments, and automated workflows.</p>
-        <a href="{{ROOT}}services-devops-automation-cicd.html" class="card-link">Learn more →</a>
-      </div>
-      <div class="card">
-        <div class="icon">\U0001F6E1️</div>
-        <h3>Cybersecurity &amp; Compliance<span class="badge-soon">Details soon</span></h3>
-        <p>Security audits, hardening, and compliance support for sensitive sites.</p>
-        <a href="{{ROOT}}services-cybersecurity-compliance.html" class="card-link">Learn more →</a>
-      </div>
-      <div class="card">
-        <div class="icon">\U0001F4BB</div>
-        <h3>Website Development<span class="badge-soon">Details soon</span></h3>
-        <p>Custom development, integrations, and full WordPress builds.</p>
-        <a href="{{ROOT}}services-website-development.html" class="card-link">Learn more →</a>
-      </div>
-      <div class="card">
         <div class="icon">\U0001F3A8</div>
-        <h3>Redesign</h3>
-        <p>Rebuild, redesign, or fully rebuild your WordPress site on a modern, conversion-focused foundation.</p>
+        <h3>Redesign &amp; Development</h3>
+        <p>Rebuild, redesign, or fully relaunch your site — or book a one-time development session for new features.</p>
         <span class="price">From $1,995</span>
-        <a href="{{ROOT}}services-redesign.html" class="card-link">Learn more →</a>
+        <a href="{{ROOT}}services-redesign-development.html" class="card-link">Learn more →</a>
+      </div>
+      <div class="card">
+        <div class="icon">\U0001F5A5️</div>
+        <h3>Infrastructure &amp; DevOps</h3>
+        <p>CI/CD pipelines, system administration, network &amp; firewall security, and virtualization/Active Directory.</p>
+        <span class="price price-quote">Custom Quote</span>
+        <a href="{{ROOT}}services-infrastructure-devops.html" class="card-link">Learn more →</a>
+      </div>
+      <div class="card">
+        <div class="icon">\U0001F50C</div>
+        <h3>SaaS &amp; Systems Integration</h3>
+        <p>Zoho and business SaaS setup and integration, plus core banking &amp; payment systems work.</p>
+        <span class="price price-quote">Custom Quote</span>
+        <a href="{{ROOT}}services-saas-systems-integration.html" class="card-link">Learn more →</a>
+      </div>
+      <div class="card">
+        <div class="icon">\U0001F916</div>
+        <h3>AI Development &amp; Integration</h3>
+        <p>Custom chatbots, workflow automation, and AI features built into your website or business systems.</p>
+        <span class="price price-quote">Custom Quote</span>
+        <a href="{{ROOT}}services-ai-development-integration.html" class="card-link">Learn more →</a>
       </div>
     </div>
   </div>
 </section>
 """
-services_body += cta_banner("Not Sure Which Service You Need?", "Send us a repair request and we'll review your site and recommend the right fix — no pressure, no hard sell.", "Get a Free Assessment")
+services_body += cta_banner("Not Sure Which Service You Need?", "Send us a request and we'll review it and recommend the right fix or scope — no pressure, no hard sell.", "Get a Free Assessment")
 
-page("services.html", "WordPress Repair &amp; Support Services", "Malware removal, speed optimization, migration, small tasks, and one-time website repair for WordPress sites.", services_body)
+page("services.html", "IT, Web &amp; Infrastructure Services", "Website repair, security hardening, speed optimization, migration, redesign, infrastructure, SaaS integration, and AI development.", services_body)
 
 # --------------------------------------------------------------------------
 # CARE PLANS PAGE  (placeholder pricing — confirm real numbers before launch)
@@ -1423,7 +1615,7 @@ about_body = f"""
   <div class="container">
     <div class="breadcrumb"><a href="{{ROOT}}index.html">Home</a> / About</div>
     <h1>About {SITE_NAME}</h1>
-    <p style="max-width:640px;">We're WordPress specialists who fix, secure, and optimize websites for owners, marketers, and agencies worldwide.</p>
+    <p style="max-width:640px;">We're an IT and digital services team — website repair and security, infrastructure and DevOps, systems integration, and AI development — for owners, marketers, and agencies worldwide.</p>
   </div>
 </section>
 
@@ -1431,17 +1623,17 @@ about_body = f"""
   <div class="container" style="max-width:760px;">
     <div class="section-head"><h2>General Questions</h2></div>
     {faq_block([
-        (f"What does {SITE_NAME} do?", "We maintain, secure, and optimize WordPress websites. Our one-time repairs and monthly care plans provide ongoing support, performance tuning, and protection so your site always runs smoothly."),
-        ("Do you only work with WordPress?", "Yes. We are WordPress specialists. It's all we do, and we do it well."),
-        ("Where are you based?", f"We're a fully remote team serving the global market — WordPress site owners everywhere, in every time zone. Reach us any time at {EMAIL_DISPLAY}."),
-        ("Who do you work with?", "We help business owners, marketers, and agencies who manage one or more WordPress sites. Our services take the technical burden off your plate so you can focus on your business."),
+        (f"What does {SITE_NAME} do?", "We started as WordPress specialists and still handle website repair, security, and performance every day — one-time fixes and monthly care plans. We've since expanded into infrastructure and DevOps, SaaS and systems integration, and AI development for clients who need more than just a website fixed."),
+        ("Do you only work with WordPress?", "No, though it's still a large part of what we do and where we started. We also handle server infrastructure, network and system administration, SaaS/CRM and banking-systems integration, and AI development — see the full list on our <a href='services.html'>Services page</a>."),
+        ("Where are you based?", f"We're a fully remote team serving the global market, in every time zone. Reach us any time at {EMAIL_DISPLAY}."),
+        ("Who do you work with?", "We help business owners, marketers, and agencies who need anything from a website fix to infrastructure work, systems integration, or custom AI development. Our services take the technical burden off your plate so you can focus on your business."),
     ])}
   </div>
 </section>
 """
-about_body += cta_banner("Not Sure Which Plan Is Right for You?", "We'll review your site and recommend the best care plan with no pressure, no hard sell, and honest advice.", "Discuss My Site")
+about_body += cta_banner("Not Sure Which Service Is Right for You?", "We'll review what you need and recommend the right service or plan — no pressure, no hard sell, and honest advice.", "Discuss My Project")
 
-page("about.html", f"About {SITE_NAME}", f"Learn about {SITE_NAME} — WordPress repair, security, and performance specialists.", about_body)
+page("about.html", f"About {SITE_NAME}", f"Learn about {SITE_NAME} — website repair, security, infrastructure, systems integration, and AI development.", about_body)
 
 # --------------------------------------------------------------------------
 # CONTACT / SUPPORT REQUEST PAGE
@@ -1451,8 +1643,8 @@ contact_body = f"""
 <section class="page-hero">
   <div class="container">
     <div class="breadcrumb"><a href="{{ROOT}}index.html">Home</a> / Contact</div>
-    <h1>Fix My WordPress Site</h1>
-    <p style="max-width:640px;">Tell us what's wrong. We'll check it out and get back to you fast with a quote (from $49) or next steps.</p>
+    <h1>Get a Free Quote</h1>
+    <p style="max-width:640px;">Tell us what you need — a website fix, security work, infrastructure, an integration, or an AI feature. We'll get back to you fast with a quote or next steps.</p>
   </div>
 </section>
 
@@ -1484,12 +1676,12 @@ contact_body = f"""
         </div>
       </div>
       <div class="form-group">
-        <label>Website URL <span class="req">*</span></label>
-        <input type="url" name="website_url" placeholder="https://yourwebsite.com" required>
+        <label>Website / Company URL <span class="req">*</span></label>
+        <input type="url" name="website_url" placeholder="https://yourwebsite.com (or your company site, if this isn't about an existing website)" required>
       </div>
       <div class="form-group">
-        <label>What's broken or not working? <span class="req">*</span></label>
-        <textarea name="issue" maxlength="1000" placeholder="e.g. Homepage shows an error, plugin not working, site hacked, site is super slow" required></textarea>
+        <label>What do you need help with? <span class="req">*</span></label>
+        <textarea name="issue" maxlength="1000" placeholder="e.g. Homepage shows an error, site hacked, need a firewall set up, want to integrate Zoho, want a chatbot on our site" required></textarea>
         <div class="hint">Max 1000 characters.</div>
       </div>
       <div class="form-group">
@@ -1527,7 +1719,7 @@ contact_body += f"""
 </section>
 """
 
-page("contact.html", "Fix My WordPress Site — Contact", "Send a website repair request to Micro Service and get a quote fast.", contact_body)
+page("contact.html", "Get a Free Quote — Contact", f"Send a request to {SITE_NAME} and get a quote fast — website repair, security, infrastructure, integrations, or AI development.", contact_body)
 
 # --------------------------------------------------------------------------
 # CONTACT THANK-YOU PAGE — FormSubmit redirects here after a successful send
@@ -1772,5 +1964,12 @@ them should not affect your ability to browse the site or submit the contact for
 <a href="{{ROOT}}contact.html">our contact page</a>.</p>
 """
 legal_page("cookies.html", "Cookie Policy", "Cookie Policy", cookies_body)
+
+# --------------------------------------------------------------------------
+# REDIRECT STUBS — old service URLs that were merged/renamed in the service
+# taxonomy update. See REDIRECTS above.
+# --------------------------------------------------------------------------
+for old_slug, new_slug in REDIRECTS:
+    redirect_page(old_slug, new_slug)
 
 print("All pages generated.")

@@ -256,6 +256,20 @@ ul { margin: 0; padding: 0; list-style: none; }
 .dropdown a:hover { background: var(--color-bg-blue); color: var(--color-primary); }
 .dropdown .soon { color: #9aa7b3; font-weight: 500; font-size: 0.82rem; display: block; padding: 6px 12px 2px; }
 
+/* Services mega-menu — two grouped columns (fixed-price vs custom-quote
+   services) instead of one long flat list. */
+.mega-menu { min-width: 520px; padding: 18px; display: flex; gap: 6px; }
+.mega-col { flex: 1; padding: 0 6px; }
+.mega-col + .mega-col { border-left: 1px solid var(--color-border); }
+.mega-col-head {
+  font-size: 0.72rem; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 0.05em; color: var(--color-primary);
+  padding: 4px 12px 12px;
+}
+.mega-item { display: flex; align-items: center; padding: 11px 12px; border-radius: var(--radius-sm); }
+.mega-item:hover { background: var(--color-bg-blue); }
+.mega-label { font-weight: 700; font-size: 0.9rem; color: var(--color-ink); line-height: 1.25; }
+
 .nav-toggle {
   display: none;
   flex-direction: column;
@@ -312,6 +326,53 @@ ul { margin: 0; padding: 0; list-style: none; }
   text-align: center;
 }
 .hero-art .emoji { font-size: 5rem; }
+
+/* Hero trust/outcome stat grid — replaces the generic hero-art emoji on
+   service pages with concrete proof points (numbers, guarantees). */
+.hero-trust-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  width: 100%;
+}
+.hero-trust-item {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.16);
+  border-radius: 14px;
+  padding: 22px 12px;
+  text-align: center;
+}
+.hero-trust-icon { font-size: 1.7rem; margin-bottom: 10px; }
+.hero-trust-value { display: block; font-size: 1.3rem; font-weight: 800; color: #fff; line-height: 1.15; }
+.hero-trust-label { display: block; font-size: 0.78rem; color: #b9cfe6; margin-top: 4px; line-height: 1.3; }
+@media (max-width: 480px) {
+  .hero-trust-value { font-size: 1.1rem; }
+  .hero-trust-icon { font-size: 1.4rem; }
+}
+
+/* Hero checklist panel — SLA/commitment style list (more items, shorter
+   phrases, than the 4-slot trust-stat grid above). */
+.hero-checklist { width: 100%; text-align: left; }
+.hero-checklist-title {
+  font-size: 0.78rem; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 0.05em; color: #ffe1ad; text-align: center; margin-bottom: 18px;
+}
+.hero-checklist-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 18px;
+}
+.hero-checklist-item {
+  font-size: 0.86rem; font-weight: 600; color: #fff; line-height: 1.35;
+  padding-left: 22px; position: relative;
+}
+.hero-checklist-item::before {
+  content: "✓"; position: absolute; left: 0; top: 0;
+  color: var(--color-accent); font-weight: 800;
+}
+@media (max-width: 560px) {
+  .hero-checklist-grid { grid-template-columns: 1fr; }
+}
 
 /* Hero orbit graphic — original hub-and-spoke illustration (no stock art):
    a central hub badge for Micro Service surrounded by 8 small nodes for
@@ -443,6 +504,23 @@ ul { margin: 0; padding: 0; list-style: none; }
 .card h3 { margin-bottom: 8px; }
 .card p { margin-bottom: 0; font-size: 0.95rem; }
 .card .price { color: var(--color-primary); font-weight: 800; font-size: 1.1rem; margin-top: 10px; display: block; }
+/* "Custom Quote" badge — used on enterprise-tier services (Infrastructure &
+   DevOps, SaaS & Systems Integration, AI Development) instead of a fixed
+   "From $X" price, since those are scoped per project rather than
+   retail-priced like the smaller repair/task services. */
+.card .price-quote {
+  color: var(--color-accent-dark);
+  background: #fff3e0;
+  border: 1px solid #f5d59a;
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  margin-top: 10px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  display: inline-block;
+}
 .card-link { font-weight: 700; font-size: 0.88rem; margin-top: 14px; display: inline-block; }
 
 /* Steps */
@@ -808,6 +886,15 @@ ul { margin: 0; padding: 0; list-style: none; }
   }
   .dropdown a { color: #dbe8f5; padding: 8px 0; }
   .dropdown a:hover { background: transparent; color: #fff; }
+
+  /* Mega-menu collapses from 2 side-by-side columns to one stacked list
+     inside the same mobile nav panel. */
+  .mega-menu { min-width: 0; flex-direction: column; padding: 4px 0 4px 14px; gap: 0; }
+  .mega-col + .mega-col { border-left: none; border-top: 1px solid rgba(255,255,255,0.14); margin-top: 6px; padding-top: 10px; }
+  .mega-col-head { color: #ffe1ad; padding: 4px 0 8px; }
+  .mega-item { padding: 8px 0; border-radius: 0; }
+  .mega-item:hover { background: transparent; }
+  .mega-label { color: #fff; }
 }
 @media (max-width: 720px) {
   .form-row { grid-template-columns: 1fr; }
