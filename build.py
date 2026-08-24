@@ -703,36 +703,6 @@ devops_body += three_steps(
     ],
 )
 
-# Pipeline diagram: PLAN -> CODE -> BUILD -> TEST -> CONTAINERIZE ->
-# INFRASTRUCTURE -> DEPLOY -> MONITOR -> FEEDBACK (loops back to PLAN),
-# each stage labeled with the specific tools used for it.
-_pipeline_stages = [
-    ("Plan", "Jira &middot; GitHub"),
-    ("Code", "Git &middot; GitHub / GitLab"),
-    ("Build", "Jenkins &middot; GitHub Actions"),
-    ("Test", "SonarQube &middot; Unit Tests"),
-    ("Containerize", "Docker"),
-    ("Infrastructure", "Terraform &middot; Ansible"),
-    ("Deploy", "Kubernetes &middot; Helm &middot; Argo CD"),
-    ("Monitor", "Prometheus &middot; Grafana &middot; ELK / Loki"),
-]
-_pipeline_html = ""
-for i, (name, tools) in enumerate(_pipeline_stages, start=1):
-    _pipeline_html += f"""<div class="pipeline-stage"><span class="pipeline-num">{i}</span><div><div class="pipeline-name">{name}</div><div class="pipeline-tools">{tools}</div></div></div><div class="pipeline-arrow">↓</div>"""
-_pipeline_html += """<div class="pipeline-stage pipeline-stage--feedback"><span class="pipeline-num">9</span><div><div class="pipeline-name">Feedback</div><div class="pipeline-tools">Metrics &amp; incident learnings feed back into planning</div></div></div>"""
-
-devops_body += f"""
-<section class="section section--light">
-  <div class="container" style="max-width:640px;">
-    <div class="section-head">
-      <h2>Our DevOps Pipeline</h2>
-      <p>A modern CI/CD pipeline, end to end — plan, build, test, deploy, and monitor, with continuous feedback closing the loop.</p>
-    </div>
-    <div class="pipeline-flow">{_pipeline_html}</div>
-    <p class="hint text-center" style="margin-top:18px;">↻ Feedback loops back into Planning — this is an ongoing cycle we help you run, not a one-time setup.</p>
-  </div>
-</section>"""
-
 _tools = [
     "GitHub / GitLab", "Jenkins / GitHub Actions", "Docker", "Kubernetes",
     "Terraform", "Ansible", "Helm", "Argo CD", "Prometheus", "Grafana",
