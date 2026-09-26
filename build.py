@@ -160,7 +160,9 @@ def render_head(title, description, filename="index.html", og_image=None):
 <meta name="twitter:description" content="{description}">
 <meta name="twitter:image" content="{image_url}">
 <link rel="stylesheet" href="{{ASSET}}css/style.css">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2248%22 fill=%22%230b2c4d%22/><text x=%2250%22 y=%2268%22 font-size=%2258%22 text-anchor=%22middle%22>\U0001F6E0️</text></svg>">
+<link rel="icon" href="{{ROOT}}assets/favicon.ico" sizes="any">
+<link rel="icon" href="{{ROOT}}assets/favicon-32.png" type="image/png">
+<link rel="apple-touch-icon" href="{{ROOT}}assets/favicon-180.png">
 </head>
 <body>
 """
@@ -198,12 +200,11 @@ def render_header(active_href):
 
     return f"""<header class="site-header">
   <div class="container nav-bar">
-    <a href="{{ROOT}}index.html" class="logo">Micro<span class="accent">Service</span></a>
+    <a href="{{ROOT}}index.html" class="logo logo--image"><img src="{{ROOT}}assets/logo-microservice.png" alt="Micro Service" width="838" height="240"></a>
     <nav class="nav-links" id="nav-links">
       {nav_html}
     </nav>
     <div class="nav-cta">
-      <a href="tel:{PHONE_TEL}" class="phone-link">\U0001F4DE {PHONE_DISPLAY}</a>
       <div class="has-dropdown currency-menu">
         <a href="{{ROOT}}contact.html" class="currency-toggle" aria-haspopup="true">{FLAG_ICONS['US']} USD <span class="chevron">▾</span></a>
         <div class="dropdown currency-dropdown">
@@ -227,8 +228,8 @@ def render_footer():
   <div class="container">
     <div class="footer-grid">
       <div class="footer-brand">
-        <div class="logo">Micro<span class="accent">Service</span></div>
-        <p>Website repair, security, infrastructure, integrations, and AI development for businesses worldwide. Fixes from $49. No long-term contracts required.</p>
+        <div class="logo logo--image"><img src="{{ROOT}}assets/logo-microservice.png" alt="Micro Service" width="838" height="240"></div>
+        <p>Website repair, security, infrastructure, integrations, and AI development for businesses worldwide. Fixes from $80. No long-term contracts required.</p>
       </div>
       <div>
         <h4>Services</h4>
@@ -259,7 +260,6 @@ def render_footer():
           <li>Open 24/7 — every day of the week, no days off.</li>
           <li>Most repairs completed within 24 hours; urgent requests handled same day.</li>
           <li>✉️ {EMAIL_DISPLAY}</li>
-          <li>\U0001F4DE <a href="tel:{PHONE_TEL}">{PHONE_DISPLAY}</a></li>
         </ul>
       </div>
       <div>
@@ -280,6 +280,7 @@ def render_footer():
     </div>
     <div class="footer-bottom">
       <span>© {SITE_NAME} — {DOMAIN}. All rights reserved.</span>
+      <span class="footer-legal-entity">© MSPoint LLC | USA | Reg. No. 2026-002065237</span>
       <div class="footer-legal">
         <a href="{{ROOT}}terms.html">Terms</a><a href="{{ROOT}}privacy.html">Privacy</a><a href="{{ROOT}}cookies.html">Cookies</a>
       </div>
@@ -541,7 +542,7 @@ service_page(
     eyebrow="Speed Optimization",
     title="Website & Server Speed Optimization",
     sub="Slow website or sluggish server? We optimize WordPress sites and the Linux or Windows servers behind them for speed and performance.",
-    stat_line="2,000+ sites optimized · 200+ five-star reviews · Speed optimization from $229 · Money-back guarantee",
+    stat_line="2,000+ sites optimized · 200+ five-star reviews · Speed optimization from $250 · Money-back guarantee",
     intro_heading="Need a One-Time Speed Optimization?",
     intro_paras=[
         "If your website feels slow, takes too long to load, or performs poorly on mobile, a one-time speed optimization can make an immediate difference.",
@@ -576,7 +577,7 @@ service_page(
     hero_stats=[
         ("\U0001F680", "2,000+", "Sites Optimized"),
         ("⭐", "200+", "Five-Star Reviews"),
-        ("\U0001F4B0", "$229", "Starting Price"),
+        ("\U0001F4B0", "$250", "Starting Price"),
         ("✅", "100%", "Money-Back Guarantee"),
     ],
 )
@@ -586,7 +587,7 @@ service_page(
     eyebrow="Migration",
     title="Migration Services Without the Stress",
     sub="Move your website, database, software, or mail safely with zero downtime and no headaches.",
-    stat_line="800+ migrations completed · 200+ five-star reviews · Migrations from $149 · Money-back guarantee",
+    stat_line="800+ migrations completed · 200+ five-star reviews · Migrations from $200 · Money-back guarantee",
     intro_heading="Need a One-Time Migration?",
     intro_paras=[
         "Whether you're switching hosting providers, changing domains, upgrading a database, moving software to a new server, or relocating a mail server, our migration service makes the process simple and stress free.",
@@ -619,7 +620,7 @@ service_page(
     hero_stats=[
         ("\U0001F69A", "800+", "Migrations Completed"),
         ("⭐", "200+", "Five-Star Reviews"),
-        ("\U0001F4B0", "$149", "Starting Price"),
+        ("\U0001F4B0", "$200", "Starting Price"),
         ("✅", "100%", "Money-Back Guarantee"),
     ],
 )
@@ -629,7 +630,7 @@ service_page(
     eyebrow="Website Repair",
     title="Website Repair & Small Fixes",
     sub="Broken pages, plugin errors, white screens, or just a quick edit — we handle website repairs and small fixes fast so you don’t have to.",
-    stat_line="10,000+ issues resolved · 200+ five-star reviews · Fixes from $49 · Money-back guarantee",
+    stat_line="10,000+ issues resolved · 200+ five-star reviews · Fixes from $80 · Money-back guarantee",
     intro_heading="Something Broken, or Just Need a Quick Change?",
     intro_paras=[
         "Whether your site is throwing errors, showing a white screen, or crashing after an update, this service gets it diagnosed and fixed fast. If you just need a quick edit — text, images, layout — it's the same service, same flat-rate simplicity.",
@@ -653,19 +654,19 @@ service_page(
     faq_items=[
         ("What counts as a repair vs. a small task?", "A repair is something broken — an error, a crash, a layout issue. A small task is something you want changed — content, images, layout. Both are handled through this same service, at the same starting price."),
         ("How long does it take?", "Most repairs and small tasks are completed within one to two business days after approval. Let us know if something is urgent."),
-        ("How much does it cost?", "Pricing starts at $49. We always confirm the exact cost before starting any work."),
+        ("How much does it cost?", "Pricing starts at $80. We always confirm the exact cost before starting any work."),
         ("How many revisions are included?", "Each request includes one free revision to make sure everything looks and works right."),
         ("Is this a subscription?", "No. This is a one-time, pay-as-you-go service. There are no ongoing fees."),
         ("Do you fix WooCommerce checkout or form issues?", "Yes. We inspect, test, and repair WooCommerce checkout problems and form errors so visitors can complete actions without issues."),
         ("What do you need to get started?", '<a href="contact.html">Submit a support request</a> describing the issue or what you\'d like changed. We\'ll review, confirm scope, and get started.'),
     ],
     closing_heading="Get It Fixed or Updated Today",
-    closing_sub="From broken pages and plugin errors to quick content edits, one fast, flat-rate service handles it all. Fixes start at $49 with a full money-back guarantee.",
+    closing_sub="From broken pages and plugin errors to quick content edits, one fast, flat-rate service handles it all. Fixes start at $80 with a full money-back guarantee.",
     cta_label="Start My Fix",
     hero_stats=[
         ("\U0001F527", "10,000+", "Issues Resolved"),
         ("⭐", "200+", "Five-Star Reviews"),
-        ("\U0001F4B0", "$49", "Starting Price"),
+        ("\U0001F4B0", "$80", "Starting Price"),
         ("✅", "100%", "Money-Back Guarantee"),
     ],
 )
@@ -768,12 +769,12 @@ redesign_body = service_hero(
     "Redesign & Development",
     "Redesign, Rebuild & Custom Development",
     "Modernize your website with a redesign or rebuild, or book a one-time development session for new features and integrations.",
-    "10,000+ issues resolved · 200+ five-star reviews · Projects from $1,995 · Trusted by 1,000+ site owners",
+    "10,000+ issues resolved · 200+ five-star reviews · Projects from $1,000 · Trusted by 1,000+ site owners",
     "Start My Website Project",
     hero_stats=[
         ("\U0001F527", "10,000+", "Issues Resolved"),
         ("⭐", "200+", "Five-Star Reviews"),
-        ("\U0001F4B0", "$1,995", "Starting Price"),
+        ("\U0001F4B0", "$1,000", "Starting Price"),
         ("\U0001F91D", "1,000+", "Site Owners Trust Us"),
     ],
 )
@@ -837,7 +838,7 @@ redesign_body += """
         <thead>
           <tr>
             <th></th>
-            <th>WordPress Rebuild<span class="tier-price">From $1,995</span></th>
+            <th>WordPress Rebuild<span class="tier-price">From $1,000</span></th>
             <th class="popular"><span class="tier-badge">Most Popular</span><br>WordPress Redesign<span class="tier-price">From $5,995</span></th>
             <th>New Website<span class="tier-price">From $7,995</span></th>
           </tr>
@@ -1097,9 +1098,9 @@ home_body = f"""
     <div class="hero-grid">
       <div>
         <span class="eyebrow" style="background:rgba(255,255,255,0.14);color:#ffe1ad;">IT &amp; Digital Solutions</span>
-        <h1>Website Repair, Infrastructure &amp; Custom Development — Handled by Experts</h1>
+        <h1>Website Fix, Infrastructure &amp; Custom Development — Handled by Experts</h1>
         <p class="lead">From fixing a broken website to running your infrastructure, integrating your systems, or building AI into your workflow — one team, start to finish.</p>
-        <p class="lead" style="font-size:0.95rem;color:#b9cfe6;">Fixes from $49. No contracts. Expert, reliable support.</p>
+        <p class="lead" style="font-size:0.95rem;color:#b9cfe6;">Fixes from $80. No contracts. Expert, reliable support.</p>
         <div class="hero-cta">
           <a href="{{ROOT}}services.html" class="btn btn-primary btn-lg">Explore Services</a>
           <a href="{{ROOT}}contact.html" class="btn btn-outline btn-lg">Get a Free Quote</a>
@@ -1216,7 +1217,7 @@ home_body += f"""
         <div class="icon">\U0001F527</div>
         <h3>Website Repair &amp; Small Fixes</h3>
         <p>Broken pages, plugin errors, white screens, or a quick edit — diagnosed and fixed fast.</p>
-        <span class="price">From $49</span>
+        <span class="price">From $80</span>
         <a href="{{ROOT}}services-website-repair-small-fixes.html" class="card-link">Learn more →</a>
       </div>
       <div class="card">
@@ -1230,21 +1231,21 @@ home_body += f"""
         <div class="icon">\U0001F680</div>
         <h3>Speed Optimization</h3>
         <p>Caching, database cleanup, image compression, and Linux/Windows server tuning.</p>
-        <span class="price">From $229</span>
+        <span class="price">From $250</span>
         <a href="{{ROOT}}services-speed-optimization.html" class="card-link">Learn more →</a>
       </div>
       <div class="card">
         <div class="icon">\U0001F69A</div>
         <h3>Migration</h3>
         <p>Website, database, software, or mail migrations with a full backup and reconfiguration.</p>
-        <span class="price">From $149</span>
+        <span class="price">From $200</span>
         <a href="{{ROOT}}services-migration.html" class="card-link">Learn more →</a>
       </div>
       <div class="card">
         <div class="icon">\U0001F3A8</div>
         <h3>Redesign &amp; Development</h3>
         <p>Rebuild, redesign, or launch a new site — or book a one-time development session.</p>
-        <span class="price">From $1,995</span>
+        <span class="price">From $1,000</span>
         <a href="{{ROOT}}services-redesign-development.html" class="card-link">Learn more →</a>
       </div>
       <div class="card">
@@ -1335,7 +1336,7 @@ home_body += f"""
 
 home_body += cta_banner(
     "Whatever It Is, Let's Fix It or Build It",
-    "One-time website repairs and security hardening, ongoing infrastructure, systems integration, and AI development — all under one team. Fast turnaround. No long-term contracts required. Fixes start at $49 with a full money-back guarantee.",
+    "One-time website repairs and security hardening, ongoing infrastructure, systems integration, and AI development — all under one team. Fast turnaround. No long-term contracts required. Fixes start at $80 with a full money-back guarantee.",
     "Get a Free Quote",
 )
 
@@ -1361,7 +1362,7 @@ services_body = f"""
         <div class="icon">\U0001F527</div>
         <h3>Website Repair &amp; Small Fixes</h3>
         <p>Broken pages, plugin errors, white screens, and site crashes — diagnosed and fixed fast, plus quick edits and small feature additions.</p>
-        <span class="price">From $49</span>
+        <span class="price">From $80</span>
         <a href="{{ROOT}}services-website-repair-small-fixes.html" class="card-link">Learn more →</a>
       </div>
       <div class="card">
@@ -1375,21 +1376,21 @@ services_body = f"""
         <div class="icon">\U0001F680</div>
         <h3>Speed Optimization</h3>
         <p>Caching, database cleanup, image compression, plugin audits, and Linux/Windows server tuning.</p>
-        <span class="price">From $229</span>
+        <span class="price">From $250</span>
         <a href="{{ROOT}}services-speed-optimization.html" class="card-link">Learn more →</a>
       </div>
       <div class="card">
         <div class="icon">\U0001F69A</div>
         <h3>Migration</h3>
         <p>Zero-downtime website, database, software, or mail-server migration, backup included.</p>
-        <span class="price">From $149</span>
+        <span class="price">From $200</span>
         <a href="{{ROOT}}services-migration.html" class="card-link">Learn more →</a>
       </div>
       <div class="card">
         <div class="icon">\U0001F3A8</div>
         <h3>Redesign &amp; Development</h3>
         <p>Rebuild, redesign, or fully relaunch your site — or book a one-time development session for new features.</p>
-        <span class="price">From $1,995</span>
+        <span class="price">From $1,000</span>
         <a href="{{ROOT}}services-redesign-development.html" class="card-link">Learn more →</a>
       </div>
       <div class="card">
@@ -1663,7 +1664,7 @@ about_body = f"""
   <div class="container">
     <div class="breadcrumb"><a href="{{ROOT}}index.html">Home</a> / About</div>
     <h1>About {SITE_NAME}</h1>
-    <p style="max-width:640px;">We're an IT and digital services team — website repair and security, infrastructure and DevOps, systems integration, and AI development — for owners, marketers, and agencies worldwide.</p>
+    <p style="max-width:640px;">We're an IT and digital services team — website repair and security, infrastructure and DevOps, systems integration, and AI development — for owners, marketers, and agencies worldwide. Micro Service is operated by MSPoint LLC, a USA-registered company (Registration No. 2026-002065237), based at 30 N Gould St Ste R, Sheridan, WY 82801.</p>
   </div>
 </section>
 
@@ -1680,6 +1681,13 @@ about_body = f"""
 </section>
 """
 about_body += cta_banner("Not Sure Which Service Is Right for You?", "We'll review what you need and recommend the right service or plan — no pressure, no hard sell, and honest advice.", "Discuss My Project")
+about_body += """
+<section class="section" style="padding-top:0;">
+  <div class="container text-center">
+    <p class="hint">© MSPoint LLC | USA | Registration No. 2026-002065237, 30 N Gould St Ste R, Sheridan, WY 82801</p>
+  </div>
+</section>
+"""
 
 page("about.html", f"About {SITE_NAME}", f"Learn about {SITE_NAME} — website repair, security, infrastructure, systems integration, and AI development.", about_body)
 
@@ -1762,7 +1770,7 @@ contact_body += f"""
   <div class="container text-center">
     <h2>How Can We Help?</h2>
     <p>For a free assessment of your website, simply send your request above or reach us directly.</p>
-    <p style="color:#eaf2fb;">✉️ {EMAIL_DISPLAY} &nbsp;·&nbsp; \U0001F4DE {PHONE_DISPLAY}</p>
+    <p style="color:#eaf2fb;">✉️ {EMAIL_DISPLAY}</p>
   </div>
 </section>
 """
@@ -1786,7 +1794,7 @@ thanks_body = f"""
       <a class="btn btn-primary btn-lg" href="{{ROOT}}index.html">Back to Home</a>
       <a class="btn btn-secondary btn-lg" href="{WHATSAPP_LINK}" target="_blank" rel="noopener">Message Us on WhatsApp</a>
     </div>
-    <p class="hint" style="margin-top:22px;">✉️ {EMAIL_DISPLAY} &nbsp;·&nbsp; \U0001F4DE {PHONE_DISPLAY}</p>
+    <p class="hint" style="margin-top:22px;">✉️ {EMAIL_DISPLAY}</p>
   </div>
 </section>
 """
