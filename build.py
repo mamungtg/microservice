@@ -145,6 +145,7 @@ def render_jsonld(filename):
         "legalName": LEGAL_NAME,
         "url": f"https://{DOMAIN}/",
         "logo": f"https://{DOMAIN}/assets/logo-microservice.png",
+        "image": f"https://{DOMAIN}/{DEFAULT_OG_IMAGE}",
         "telephone": PHONE_TEL,
         "address": {
             "@type": "PostalAddress",
