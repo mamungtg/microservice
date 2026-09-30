@@ -7,9 +7,11 @@ Edit the CONTENT section (services list, home page copy, etc.) and re-run
 this script any time you want to update the site.
 """
 import os
+import json
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 SITE_NAME = "Micro Service"
+LEGAL_NAME = "MSPoint LLC"
 DOMAIN = "mspointbd.com"
 SUPPORT_URL = "contact.html"
 PHONE_DISPLAY = "+880 1722-458581"
@@ -127,8 +129,49 @@ NAV_ITEMS = [
 DEFAULT_OG_IMAGE = "assets/og-image.png"
 
 
+def render_jsonld(filename):
+    """Structured data (JSON-LD) — homepage only. Organization + WebSite
+    schema so search engines/AI overviews have an unambiguous, machine-
+    readable statement of who operates the site."""
+    if filename != "index.html":
+        return ""
+    # Drop any sameAs entries that are still "#" placeholders.
+    same_as = [url for url in (LINKEDIN_URL, FACEBOOK_URL) if url and url != "#"]
+    organization = {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "@id": f"https://{DOMAIN}/#organization",
+        "name": SITE_NAME,
+        "legalName": LEGAL_NAME,
+        "url": f"https://{DOMAIN}/",
+        "logo": f"https://{DOMAIN}/assets/logo-microservice.png",
+        "telephone": PHONE_TEL,
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "30 N Gould St Ste R",
+            "addressLocality": "Sheridan",
+            "addressRegion": "WY",
+            "postalCode": "82801",
+            "addressCountry": "US",
+        },
+        "sameAs": same_as,
+    }
+    website = {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "@id": f"https://{DOMAIN}/#website",
+        "name": SITE_NAME,
+        "url": f"https://{DOMAIN}/",
+        "publisher": {"@id": f"https://{DOMAIN}/#organization"},
+    }
+    return (
+        f'<script type="application/ld+json">{json.dumps(organization, ensure_ascii=False)}</script>\n'
+        f'<script type="application/ld+json">{json.dumps(website, ensure_ascii=False)}</script>\n'
+    )
+
+
 def render_head(title, description, filename="index.html", og_image=None):
-    page_title = f"{title} | {SITE_NAME}"
+    page_title = title if SITE_NAME in title else f"{title} | {SITE_NAME}"
     # The homepage's canonical/OG URL is the bare domain, not "/index.html" —
     # avoids the two being treated as duplicate-content URLs by crawlers.
     url_path = "" if filename == "index.html" else filename
@@ -161,9 +204,11 @@ def render_head(title, description, filename="index.html", og_image=None):
 <meta name="twitter:image" content="{image_url}">
 <link rel="stylesheet" href="{{ASSET}}css/style.css">
 <link rel="icon" href="{{ROOT}}assets/favicon.ico" sizes="any">
-<link rel="icon" href="{{ROOT}}assets/favicon-32.png" type="image/png">
+<link rel="icon" href="{{ROOT}}assets/favicon-48.png" type="image/png" sizes="48x48">
+<link rel="icon" href="{{ROOT}}assets/favicon-96.png" type="image/png" sizes="96x96">
+<link rel="icon" href="{{ROOT}}assets/favicon-144.png" type="image/png" sizes="144x144">
 <link rel="apple-touch-icon" href="{{ROOT}}assets/favicon-180.png">
-</head>
+{render_jsonld(filename)}</head>
 <body>
 """
 
@@ -1340,7 +1385,7 @@ home_body += cta_banner(
     "Get a Free Quote",
 )
 
-page("index.html", "IT, Web & Infrastructure Solutions", "We fix broken, hacked, and slow websites, run infrastructure and DevOps, integrate SaaS and banking systems, and build AI features — one team, start to finish.", home_body)
+page("index.html", "Micro Service – IT, Web & Infrastructure Solutions", "We fix broken, hacked, and slow websites, run infrastructure and DevOps, integrate SaaS and banking systems, and build AI features — one team, start to finish.", home_body)
 
 # --------------------------------------------------------------------------
 # SERVICES OVERVIEW PAGE
