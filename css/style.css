@@ -941,11 +941,12 @@ ul { margin: 0; padding: 0; list-style: none; }
   .orbit-hub { font-size: 1.4rem; }
 }
 
-/* Floating contact widgets (Fiverr + WhatsApp) */
+/* Floating contact widget (Fiverr) */
 .float-widgets {
   position: fixed;
   right: 18px;
-  bottom: 18px;
+  top: 50%; /* vertically centred on the right edge, clear of the chat bubble */
+  transform: translateY(-50%);
   z-index: 200;
   display: flex;
   flex-direction: column;
@@ -975,7 +976,16 @@ ul { margin: 0; padding: 0; list-style: none; }
   display: flex; align-items: center; justify-content: center;
   font-size: 1.1rem;
 }
-.float-card .float-icon.whatsapp { background: #25D366; }
+.float-card .float-fiverr-logo { width: 64px; height: 64px; display: block; }
+.float-card .float-wordmark {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 800;
+  font-size: 1.45rem;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: #404145;
+}
+.float-card .float-wordmark .dot { color: #1dbf73; }
 .float-card .float-label { font-size: 0.78rem; font-weight: 700; color: var(--color-ink); line-height: 1.3; }
 .float-card img.qr { width: 88px; height: 88px; border-radius: 6px; border: 1px solid var(--color-border); }
 @media (max-width: 600px) {
@@ -983,7 +993,7 @@ ul { margin: 0; padding: 0; list-style: none; }
      of hero/body copy on narrow viewports. Label text is kept for screen
      readers (visually hidden, not display:none) so the links stay
      accessible; the QR image is dropped since WhatsApp opens directly. */
-  .float-widgets { right: 10px; bottom: 10px; gap: 10px; }
+  .float-widgets { right: 10px; gap: 10px; }
   .float-card {
     width: 50px;
     height: 50px;
@@ -993,6 +1003,7 @@ ul { margin: 0; padding: 0; list-style: none; }
     align-items: center;
   }
   .float-card .float-icon { width: 50px; height: 50px; font-size: 1.25rem; margin: 0; }
+  .float-card .float-fiverr-logo { width: 50px; height: 50px; }
   .float-card .float-label {
     position: absolute;
     width: 1px; height: 1px;

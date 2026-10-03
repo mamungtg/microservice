@@ -320,7 +320,6 @@ def render_footer():
           <a href="{LINKEDIN_URL}" target="_blank" rel="noopener" aria-label="LinkedIn">{SOCIAL_ICONS['linkedin']}</a>
           <a href="#" aria-label="X">{SOCIAL_ICONS['x']}</a>
           <a href="#" aria-label="YouTube">{SOCIAL_ICONS['youtube']}</a>
-          <a href="{WHATSAPP_LINK}" target="_blank" rel="noopener" aria-label="WhatsApp">{SOCIAL_ICONS['whatsapp']}</a>
         </div>
       </div>
     </div>
@@ -335,13 +334,8 @@ def render_footer():
 </footer>
 <div class="float-widgets">
   <a class="float-card" href="{FIVERR_URL}" target="_blank" rel="noopener">
-    <span class="float-icon">{SOCIAL_ICONS['fiverr']}</span>
+    <img class="float-fiverr-logo" src="{{ROOT}}assets/fiverr-logo.png" alt="Fiverr" width="64" height="64">
     <span class="float-label">Hire Me on Fiverr</span>
-  </a>
-  <a class="float-card" href="{WHATSAPP_LINK}" target="_blank" rel="noopener">
-    <img class="qr" src="{{ROOT}}assets/whatsapp-qr.png" alt="Scan to chat on WhatsApp">
-    <span class="float-label">Scan to chat on WhatsApp</span>
-    <span class="float-icon whatsapp">{SOCIAL_ICONS['whatsapp']}</span>
   </a>
 </div>
 <!-- CookieYes "revisit consent" trigger — the cky-banner-element class is
@@ -349,6 +343,7 @@ def render_footer():
      element with this class to reopen the preferences panel. -->
 <button type="button" class="cky-banner-element cookie-revisit-btn" id="cookie-revisit-btn" aria-label="Cookie Settings" title="Cookie Settings">\U0001F36A</button>
 <script src="{{ROOT}}js/main.js" defer></script>
+<script src="https://chat.mspointbd.com/widget.js" defer></script>
 </body>
 </html>
 """
@@ -1838,7 +1833,6 @@ thanks_body = f"""
   <div class="container text-center">
     <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
       <a class="btn btn-primary btn-lg" href="{{ROOT}}index.html">Back to Home</a>
-      <a class="btn btn-secondary btn-lg" href="{WHATSAPP_LINK}" target="_blank" rel="noopener">Message Us on WhatsApp</a>
     </div>
     <p class="hint" style="margin-top:22px;">✉️ {EMAIL_DISPLAY}</p>
   </div>
