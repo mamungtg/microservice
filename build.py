@@ -52,6 +52,14 @@ AUDIT_BOOKING_URL = "contact.html"
 # Set this as the "redirect after purchase" URL in Lemon Squeezy.
 PRODUCT_THANKS_PAGE = "vps-lockdown-thanks.html"
 
+# DIY Toolkits shown as the third "DIY Toolkits" column in the Services
+# mega-menu. Add future products here: (page, menu label, price, is_live).
+# Only live entries appear in the menu; the column hides itself when none are.
+TOOLKITS = [
+    ("vps-lockdown.html", "VPS Lockdown Kit", PRODUCT_PRICE, PRODUCT_LIVE),
+]
+TOOLKITS_LIVE = [t for t in TOOLKITS if t[3]]
+
 # Default trust badges shown under every service hero — override per page if needed.
 DEFAULT_TRUST_BADGES = ["After-Sales Support", "Experienced Team", "Fair Pricing", "Fast Turnaround"]
 
@@ -132,7 +140,6 @@ NAV_ITEMS = [
     ("index.html", "Home"),
     ("__SERVICES_DROPDOWN__", "Services"),
     ("care-plans.html", "Care Plans"),
-] + ([("vps-lockdown.html", "Toolkits")] if PRODUCT_LIVE else []) + [
     ("about.html", "About"),
     ("contact.html", "Contact"),
 ]
@@ -240,7 +247,7 @@ def render_header(active_href):
     # fast-turnaround services, last 4 are the custom-quote / larger-scope
     # services — this split matches the order the taxonomy was designed in.
     fix_col, scale_col = SERVICES_LIVE[:4], SERVICES_LIVE[4:]
-    services_dd = '<div class="dropdown mega-menu">'
+    services_dd = f'<div class="dropdown mega-menu{" mega-menu--3" if TOOLKITS_LIVE else ""}">'
     services_dd += '<div class="mega-col"><div class="mega-col-head">Fix &amp; Optimize</div>'
     for href, label in fix_col:
         services_dd += f'<a href="{{ROOT}}{href}" class="mega-item"><span class="mega-label">{label}</span></a>'
@@ -253,12 +260,17 @@ def render_header(active_href):
         for label in SERVICES_SOON:
             services_dd += f'<a href="#" class="mega-item" style="opacity:.55;pointer-events:none;"><span class="mega-label">{label}</span></a>'
     services_dd += '</div>'
+    if TOOLKITS_LIVE:
+        services_dd += '<div class="mega-col mega-col--diy"><div class="mega-col-head">DIY Toolkits</div>'
+        for href, label, price, _live in TOOLKITS_LIVE:
+            services_dd += f'<a href="{{ROOT}}{href}" class="mega-item"><span class="mega-label">{label}</span><span class="mega-price">{price}</span></a>'
+        services_dd += '</div>'
     services_dd += '</div>'
 
     nav_html = ""
     for href, label in NAV_ITEMS:
         if href == "__SERVICES_DROPDOWN__":
-            services_active = "active" if active_href.startswith("services-") or active_href == "services.html" else ""
+            services_active = "active" if active_href.startswith("services-") or active_href == "services.html" or any(active_href == t[0] for t in TOOLKITS) else ""
             nav_html += f'<div class="has-dropdown"><a href="{{ROOT}}services.html" class="{services_active}">{label} ▾</a>{services_dd}</div>'
         else:
             nav_html += f'<a href="{{ROOT}}{href}" class="{is_active(href)}">{label}</a>'
@@ -315,7 +327,7 @@ def render_footer():
           <li><a href="{{ROOT}}care-plans.html">Care Plans</a></li>
           <li><a href="{{ROOT}}maintenance-plan.html">Maintenance Plan</a></li>
           <li><a href="{{ROOT}}care-plans.html">Security Plan</a></li>
-          <li><a href="{{ROOT}}care-plans.html">Performance Plan</a></li>{chr(10) + '          <li><a href="{ROOT}vps-lockdown.html">VPS Lockdown Kit</a></li>' if PRODUCT_LIVE else ''}
+          <li><a href="{{ROOT}}care-plans.html">Performance Plan</a></li>{''.join(chr(10) + f'          <li><a href="{{ROOT}}{t[0]}">{t[1]}</a></li>' for t in TOOLKITS_LIVE)}
           <li><a href="{{ROOT}}about.html">About Us</a></li>
         </ul>
       </div>
