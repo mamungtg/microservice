@@ -1067,3 +1067,71 @@ ul { margin: 0; padding: 0; list-style: none; }
 @media (max-width: 600px) {
   .cookie-revisit-btn { left: 10px; bottom: 10px; width: 40px; height: 40px; font-size: 1.15rem; }
 }
+
+/* ==========================================================================
+   Digital product — VPS Lockdown Kit
+   ========================================================================== */
+.terminal {
+  width: 100%;
+  max-width: 470px;
+  background: #0a1622;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  text-align: left;
+}
+.terminal-bar {
+  display: flex; align-items: center; gap: 6px;
+  padding: 10px 14px;
+  background: #13263a;
+}
+.terminal-bar span { width: 11px; height: 11px; border-radius: 50%; background: #ff5f57; }
+.terminal-bar span:nth-child(2) { background: #febc2e; }
+.terminal-bar span:nth-child(3) { background: #28c840; }
+.terminal-bar em { margin-left: 8px; font-style: normal; font-size: 0.78rem; color: #8aa3bb; }
+.terminal pre {
+  margin: 0;
+  padding: 18px 18px 20px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.82rem;
+  line-height: 1.75;
+  color: #dbe8f5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.terminal .t-ok { color: #4ade80; font-weight: 700; }
+.terminal .t-warn { color: var(--color-accent); font-weight: 700; }
+.terminal .t-dim { color: #7f97ae; }
+
+.card code, .step code, .faq-a code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.86em;
+  background: var(--color-bg-blue);
+  color: var(--color-primary-dark);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.plan-card .btn-block { margin-top: 4px; }
+.kit-trust .card { height: 100%; }
+
+.kit-teaser {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  background: var(--color-bg-blue);
+  border: 1px solid var(--color-border);
+  border-left: 5px solid var(--color-accent);
+  border-radius: var(--radius-lg);
+  padding: 30px 34px;
+}
+.kit-teaser h2 { font-size: 1.45rem; margin-top: 10px; }
+.kit-teaser p { margin: 0; }
+.kit-teaser .btn { flex-shrink: 0; }
+
+@media (max-width: 760px) {
+  .kit-teaser { flex-direction: column; align-items: flex-start; padding: 24px 20px; }
+  .terminal pre { font-size: 0.74rem; padding: 14px; }
+}

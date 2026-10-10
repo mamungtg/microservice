@@ -18,7 +18,7 @@ PHONE_DISPLAY = "+880 1722-458581"
 PHONE_TEL = "+8801722458581"
 WHATSAPP_NUMBER = "8801722458581"
 WHATSAPP_LINK = f"https://wa.me/{WHATSAPP_NUMBER}"
-FIVERR_URL = "https://www.fiverr.com/"  # placeholder — replace with your exact Fiverr profile URL
+FIVERR_URL = "https://www.fiverr.com/mdmominulhoque"
 LINKEDIN_URL = "https://www.linkedin.com/in/mdmhoque/"
 FACEBOOK_URL = "https://www.facebook.com/mamungtg/"
 EMAIL_DISPLAY = "support@mspointbd.com"  # placeholder — update with real inbox
@@ -33,6 +33,24 @@ FORM_TARGET_EMAIL = "mominul@mspointbd.com"
 # (or your own custom domain/route once you've set one up) and re-run
 # `python3 build.py`.
 FORM_ENDPOINT = "https://mspointbd-mail-relay.hoque-mdmominul.workers.dev/"
+
+# --------------------------------------------------------------------------
+# DIGITAL PRODUCTS — VPS Lockdown Kit
+# --------------------------------------------------------------------------
+# Paste the Lemon Squeezy (or Gumroad) checkout link here once the product is
+# set up there, then re-run `python3 build.py`.
+#   Empty  -> PRE-LAUNCH mode: the page is built but marked noindex, its buttons
+#             say "Get Notified at Launch" (-> contact form), and it is NOT
+#             linked from the nav/footer/home page yet.
+#   Filled -> LIVE mode: buy buttons open the checkout overlay, the page is
+#             indexable, and "Toolkits" links appear in nav, footer and home.
+LEMON_CHECKOUT_URL = ""
+PRODUCT_LIVE = bool(LEMON_CHECKOUT_URL)
+PRODUCT_PRICE = "$17"
+# Booking link for the $99 live server audit (e.g. a Cal.com event link).
+AUDIT_BOOKING_URL = "contact.html"
+# Set this as the "redirect after purchase" URL in Lemon Squeezy.
+PRODUCT_THANKS_PAGE = "vps-lockdown-thanks.html"
 
 # Default trust badges shown under every service hero — override per page if needed.
 DEFAULT_TRUST_BADGES = ["After-Sales Support", "Experienced Team", "Fair Pricing", "Fast Turnaround"]
@@ -114,6 +132,7 @@ NAV_ITEMS = [
     ("index.html", "Home"),
     ("__SERVICES_DROPDOWN__", "Services"),
     ("care-plans.html", "Care Plans"),
+] + ([("vps-lockdown.html", "Toolkits")] if PRODUCT_LIVE else []) + [
     ("about.html", "About"),
     ("contact.html", "Contact"),
 ]
@@ -171,7 +190,7 @@ def render_jsonld(filename):
     )
 
 
-def render_head(title, description, filename="index.html", og_image=None):
+def render_head(title, description, filename="index.html", og_image=None, noindex=False, extra_head=""):
     page_title = title if SITE_NAME in title else f"{title} | {SITE_NAME}"
     # The homepage's canonical/OG URL is the bare domain, not "/index.html" —
     # avoids the two being treated as duplicate-content URLs by crawlers.
@@ -189,7 +208,7 @@ def render_head(title, description, filename="index.html", og_image=None):
 <title>{page_title}</title>
 <meta name="description" content="{description}">
 <link rel="canonical" href="{canonical_url}">
-<!-- Open Graph (Facebook, WhatsApp, LinkedIn) -->
+{'<meta name="robots" content="noindex,follow">' + chr(10) if noindex else ''}<!-- Open Graph (Facebook, WhatsApp, LinkedIn) -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="{SITE_NAME}">
 <meta property="og:title" content="{page_title}">
@@ -209,7 +228,7 @@ def render_head(title, description, filename="index.html", og_image=None):
 <link rel="icon" href="{{ROOT}}assets/favicon-96.png" type="image/png" sizes="96x96">
 <link rel="icon" href="{{ROOT}}assets/favicon-144.png" type="image/png" sizes="144x144">
 <link rel="apple-touch-icon" href="{{ROOT}}assets/favicon-180.png">
-{render_jsonld(filename)}</head>
+{render_jsonld(filename)}{extra_head}</head>
 <body>
 """
 
@@ -296,7 +315,7 @@ def render_footer():
           <li><a href="{{ROOT}}care-plans.html">Care Plans</a></li>
           <li><a href="{{ROOT}}maintenance-plan.html">Maintenance Plan</a></li>
           <li><a href="{{ROOT}}care-plans.html">Security Plan</a></li>
-          <li><a href="{{ROOT}}care-plans.html">Performance Plan</a></li>
+          <li><a href="{{ROOT}}care-plans.html">Performance Plan</a></li>{chr(10) + '          <li><a href="{ROOT}vps-lockdown.html">VPS Lockdown Kit</a></li>' if PRODUCT_LIVE else ''}
           <li><a href="{{ROOT}}about.html">About Us</a></li>
         </ul>
       </div>
@@ -327,7 +346,7 @@ def render_footer():
       <span>© {SITE_NAME} — {DOMAIN}. All rights reserved.</span>
       <span class="footer-legal-entity">© MSPoint LLC | USA | Reg. No. 2026-002065237</span>
       <div class="footer-legal">
-        <a href="{{ROOT}}terms.html">Terms</a><a href="{{ROOT}}privacy.html">Privacy</a><a href="{{ROOT}}cookies.html">Cookies</a>
+        <a href="{{ROOT}}terms.html">Terms</a><a href="{{ROOT}}privacy.html">Privacy</a><a href="{{ROOT}}refund-policy.html">Refunds</a><a href="{{ROOT}}cookies.html">Cookies</a>
       </div>
     </div>
   </div>
@@ -348,9 +367,9 @@ def render_footer():
 </html>
 """
 
-def page(filename, title, description, body_html, active_href=None, asset_prefix="", og_image=None):
+def page(filename, title, description, body_html, active_href=None, asset_prefix="", og_image=None, noindex=False, extra_head=""):
     active_href = active_href or filename
-    html = render_head(title, description, filename, og_image) + render_header(active_href) + body_html + render_footer()
+    html = render_head(title, description, filename, og_image, noindex, extra_head) + render_header(active_href) + body_html + render_footer()
     html = html.replace("{ASSET}", asset_prefix).replace("{ROOT}", asset_prefix)
     with open(os.path.join(ROOT, filename), "w", encoding="utf-8") as f:
         f.write(html)
@@ -1332,28 +1351,59 @@ home_body += f"""
 </section>
 """
 
+
+if PRODUCT_LIVE:
+    home_body += f"""
+<section class="section section--tight">
+  <div class="container">
+    <div class="kit-teaser">
+      <div>
+        <span class="eyebrow">New · Digital Toolkit</span>
+        <h2>Prefer to Do It Yourself? Lock Down Your VPS in 20 Minutes</h2>
+        <p>The VPS Lockdown Kit packages our server hardening steps into a tested script, a compromise checklist, and a plain-English guide — {PRODUCT_PRICE}, one-time.</p>
+      </div>
+      <a href="{{ROOT}}vps-lockdown.html" class="btn btn-primary btn-lg">See the Kit</a>
+    </div>
+  </div>
+</section>
+"""
+
 home_body += f"""
 <section class="section section--light">
   <div class="container">
     <div class="section-head">
-      <h2>Trusted by WordPress Site Owners</h2>
-      <p>Sample feedback — replace with your real customer reviews before launch.</p>
+      <h2>Trusted by our valuable clients</h2>
     </div>
     <div class="grid grid-3">
       <div class="testimonial">
         <div class="stars">★★★★★</div>
-        <p>"Our site was hacked and showing warnings in Chrome. {SITE_NAME} cleaned it up and had us back online the same day."</p>
-        <div class="who">— Sample review, replace with a real one</div>
+        <p>"Mominul helped us with a customized eBook delivery system using Stripe-hosted checkout and WooCommerce digital product. He added all our requested functions to our designed forms and integrated SendGrid email templates. Because of Mominul, we are pleased to have a system that we truly want."</p>
+        <div class="who">— Godleadingme on Fiverr,United States</div>
       </div>
       <div class="testimonial">
         <div class="stars">★★★★★</div>
-        <p>"Clear pricing, fast turnaround, and they explained exactly what was wrong. Would use again."</p>
-        <div class="who">— Sample review, replace with a real one</div>
+        <p>"The communication with Mominul was always outstanding. He quickly understood the issues I was facing and implemented the necessary changes in no time. We will definitely be working with Mominul again in the future."</p>
+        <div class="who">— Madoc1106 on Fiverr,Germany </div>
       </div>
       <div class="testimonial">
         <div class="stars">★★★★★</div>
-        <p>"Our checkout page had been broken for days before we found them. Fixed within hours."</p>
-        <div class="who">— Sample review, replace with a real one</div>
+        <p>"Mominul successfully configured our two servers in live sync for website files and database, and made our servers very secure. He responded and fixed any problems very quickly."</p>
+        <div class="who">—Facabo on Fiverr,United States</div>
+      </div>
+	  <div class="testimonial">
+        <div class="stars">★★★★★</div>
+        <p>"Fantastic experience. He secured my VPS, installed Coolify, and made sure everything was set up correctly. Very proactive, knowledgeable, and easy to work with. Delivered exactly what I needed and exceeded expectations. Highly recommended!"</p>
+        <div class="who">—Usamaibrahim on Fiverr,United Kingdom</div>
+      </div>
+	  <div class="testimonial">
+        <div class="stars">★★★★★</div>
+        <p>"I hired Muhammad Mominul Hoque for server hardening on my Linux web server, and the work was done perfectly, my server is now much more secure with zero critical vulnerabilities remaining. They showed outstanding code expertise in implementing best practices like firewall rules, fail2ban, SSH key authentication, and custom scripts; maintained high professionalism with detailed reports, testing, and clear documentation;"</p>
+        <div class="who">—Manzarhasan on Fiverr,United States</div>
+      </div>
+	  <div class="testimonial">
+        <div class="stars">★★★★★</div>
+        <p>"Outstanding experience in every detail. Communication was fast and precise, and he made decisions confidently while explaining everything clearly. He outlined each step of the project thoroughly, so there were no surprises—delivering a perfect solution for our needs. Whenever we have tasks in this technical field, Momodul is our go-to partner."</p>
+        <div class="who">—Sundowndj on Fiverr,Germany</div>
       </div>
     </div>
   </div>
@@ -1841,6 +1891,309 @@ thanks_body = f"""
 page("contact-thanks.html", f"Request Received — {SITE_NAME}", "Your website repair request has been received.", thanks_body)
 
 # --------------------------------------------------------------------------
+# DIGITAL PRODUCT — VPS LOCKDOWN KIT  (landing page + post-purchase page)
+# --------------------------------------------------------------------------
+# Every claim on this page must match what is actually in the kit you ship.
+# If you change the contents (distros, files, video length), update the copy
+# here and re-run build.py.
+
+def _checkout_href():
+    if not PRODUCT_LIVE:
+        return "{ROOT}contact.html"
+    sep = "&" if "?" in LEMON_CHECKOUT_URL else "?"
+    return LEMON_CHECKOUT_URL if "embed=1" in LEMON_CHECKOUT_URL else f"{LEMON_CHECKOUT_URL}{sep}embed=1"
+
+
+def buy_button(label=None, extra_class="btn-lg"):
+    """Primary buy CTA. Live: opens the Lemon Squeezy overlay checkout.
+    Pre-launch: sends people to the contact form to be notified."""
+    if PRODUCT_LIVE:
+        label = label or f"Get the Kit — {PRODUCT_PRICE}"
+        return f'<a href="{_checkout_href()}" class="btn btn-primary {extra_class} lemonsqueezy-button">{label}</a>'
+    return f'<a href="{{ROOT}}contact.html" class="btn btn-primary {extra_class}">Get Notified at Launch</a>'
+
+
+_LEMON_JS = '<script src="https://app.lemonsqueezy.com/js/lemon.js" defer></script>\n' if PRODUCT_LIVE else ""
+
+_terminal = """<div class="terminal" aria-hidden="true">
+  <div class="terminal-bar"><span></span><span></span><span></span><em>root@vps: ~</em></div>
+  <pre><span class="t-dim">$</span> sudo ./lockdown.sh
+<span class="t-ok">[✓]</span> SSH key found for current user
+<span class="t-ok">[✓]</span> Password &amp; root login disabled
+<span class="t-ok">[✓]</span> Firewall: deny incoming, allow 22/80/443
+<span class="t-ok">[✓]</span> fail2ban active on sshd
+<span class="t-ok">[✓]</span> Automatic security updates on
+<span class="t-ok">[✓]</span> Kernel/network hardening applied
+<span class="t-warn">[!]</span> 2 services listening publicly — review
+<span class="t-dim">Report saved: lockdown-report.txt</span></pre>
+</div>"""
+
+kit_body = f"""
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div>
+        <span class="eyebrow" style="background:rgba(255,255,255,0.14);color:#ffe1ad;">Digital Toolkit{'' if PRODUCT_LIVE else ' · Launching Soon'}</span>
+        <h1>Lock Down Your Linux VPS in 20 Minutes</h1>
+        <p class="lead">A tested hardening script, an "Am I already compromised?" checklist, and a plain-English guide — built from real server cleanup and hardening jobs, for people who run their own VPS without a DevOps team.</p>
+        <p class="lead" style="font-size:0.95rem;color:#b9cfe6;">Ubuntu 22.04 / 24.04 &amp; Debian 12 · One-time payment of {PRODUCT_PRICE} · Instant download · 14-day refund</p>
+        <div class="hero-cta">
+          {buy_button()}
+          <a href="#inside" class="btn btn-outline btn-lg">See What's Inside</a>
+        </div>
+      </div>
+      <div class="hero-art">
+        {_terminal}
+      </div>
+    </div>
+  </div>
+</section>
+<div class="hero-badges"><div class="container"><span>Safe for Live Servers</span><span>No Subscription</span><span>Lifetime Updates</span><span>Built by a Certified Linux Engineer</span></div></div>
+
+<section class="section">
+  <div class="container" style="max-width:820px;">
+    <div class="section-head">
+      <span class="eyebrow">The Problem</span>
+      <h2>Most VPS Break-Ins Aren't Sophisticated</h2>
+      <p>Bots scan every public IP on the internet around the clock. They don't need a clever exploit — they look for the same handful of open doors on every fresh server.</p>
+    </div>
+    <ul class="problem-list grid grid-2">
+      <li>SSH open to the world with password login</li>
+      <li>Root allowed to log in directly</li>
+      <li>No firewall, or every port left open</li>
+      <li>Security patches not applied for months</li>
+      <li>Nothing blocking repeated failed logins</li>
+      <li>Nobody watching for unknown processes or cron jobs</li>
+    </ul>
+    <p style="margin-top:22px;">We've cleaned up servers that were quietly mining cryptocurrency for someone else and mail servers hit by ransomware. The cleanup takes days. Closing the common entry points takes minutes — that's what this kit is for.</p>
+  </div>
+</section>
+"""
+
+kit_body += f"""
+<section class="section section--light" id="inside">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">What's Inside</span>
+      <h2>Everything You Need to Harden and Check Your Server</h2>
+      <p>Download once, use on every server you manage.</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="card"><div class="icon">\U0001F6E1️</div><h3>lockdown.sh</h3><p>One script that applies the essentials: SSH key-only login, root login off, UFW firewall, fail2ban, automatic security updates, and kernel/network hardening. It checks for a working SSH key before touching SSH, and asks before each step.</p></div>
+      <div class="card"><div class="icon">\U0001F50D</div><h3>"Am I Compromised?" Checklist</h3><p>Step-by-step commands to look for the signs we find on real hacked servers: unknown processes, CPU spikes, suspicious cron jobs, rogue <code>authorized_keys</code> entries, and new users.</p></div>
+      <div class="card"><div class="icon">\U0001F4D8</div><h3>Plain-English PDF Guide</h3><p>What every change does, why it matters, and how to undo it. Written so a developer or site owner can follow it without a sysadmin background.</p></div>
+      <div class="card"><div class="icon">\U0001F310</div><h3>Web Server Add-On</h3><p>Extra hardening notes for servers running WordPress, PHP-FPM, and Nginx — file permissions, PHP settings, and locking down admin areas.</p></div>
+      <div class="card"><div class="icon">\U0001F3AC</div><h3>Walkthrough Video</h3><p>A screen-recorded run on a fresh VPS, start to finish, so you know exactly what to expect before running it on yours.</p></div>
+      <div class="card"><div class="icon">↩️</div><h3>Rollback Notes</h3><p>Each change is logged to a report file, with the exact commands to reverse it if something on your server needs a different setting.</p></div>
+    </div>
+  </div>
+</section>
+"""
+
+kit_body += three_steps(
+    "How It Works",
+    "Three steps. About 20 minutes on a typical VPS.",
+    [
+        ("Snapshot", "Take a snapshot or backup of your VPS from your provider's panel, and confirm you can log in with an SSH key. The guide shows how."),
+        ("Run", "Upload the kit and run <code>lockdown.sh</code>. It explains each change and asks before applying it, so nothing happens behind your back."),
+        ("Verify", "Work through the compromise checklist and review the saved report. Anything that needs attention is flagged clearly."),
+    ],
+)
+
+kit_body += """
+<section class="section section--light">
+  <div class="container">
+    <div class="grid grid-2">
+      <div class="card">
+        <h3>This Kit Is for You If…</h3>
+        <ul class="checklist">
+          <li>You run your own VPS on DigitalOcean, Hetzner, OVH, Linode, Vultr, AWS Lightsail or similar</li>
+          <li>You host websites, apps, or APIs and don't have a DevOps team</li>
+          <li>You're comfortable running commands over SSH</li>
+          <li>You want a fresh server secured properly from day one</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>It's Not the Right Fit If…</h3>
+        <ul class="problem-list">
+          <li>You're on shared hosting with no root access</li>
+          <li>Your server is managed through cPanel/Plesk with its own firewall (the guide explains what to skip, but a review is safer)</li>
+          <li>Your server is already showing signs of a hack — that needs a cleanup first</li>
+        </ul>
+        <p style="margin-bottom:0;">Already hacked? <a href="{ROOT}services-malware-removal-security-hardening.html">Our malware removal service</a> handles the cleanup.</p>
+      </div>
+    </div>
+  </div>
+</section>
+"""
+
+kit_body += """
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <h2>From Our Server Hardening Clients</h2>
+      <p>Reviews from real Fiverr orders for the hands-on work this kit is built on.</p>
+    </div>
+    <div class="grid grid-2">
+      <div class="testimonial">
+        <div class="stars">★★★★★</div>
+        <p>"I hired Muhammad Mominul Hoque for server hardening on my Linux web server, and the work was done perfectly, my server is now much more secure with zero critical vulnerabilities remaining. They showed outstanding code expertise in implementing best practices like firewall rules, fail2ban, SSH key authentication, and custom scripts; maintained high professionalism with detailed reports, testing, and clear documentation;"</p>
+        <div class="who">— Manzarhasan on Fiverr, United States</div>
+      </div>
+      <div class="testimonial">
+        <div class="stars">★★★★★</div>
+        <p>"Fantastic experience. He secured my VPS, installed Coolify, and made sure everything was set up correctly. Very proactive, knowledgeable, and easy to work with. Delivered exactly what I needed and exceeded expectations. Highly recommended!"</p>
+        <div class="who">— Usamaibrahim on Fiverr, United Kingdom</div>
+      </div>
+    </div>
+  </div>
+</section>
+"""
+
+kit_body += f"""
+<section class="section section--light" id="pricing">
+  <div class="container">
+    <div class="section-head">
+      <h2>Do It Yourself, or Let Us Do It</h2>
+      <p>Start with the kit. If you'd rather have an expert check or do the work, there's an option for that too.</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="plan-card popular">
+        <span class="plan-badge">Most Popular</span>
+        <h3>VPS Lockdown Kit</h3>
+        <div class="plan-price">{PRODUCT_PRICE} <span>one-time</span></div>
+        <p>Do it yourself in about 20 minutes.</p>
+        <ul>
+          <li>lockdown.sh hardening script</li>
+          <li>"Am I Compromised?" checklist</li>
+          <li>PDF guide + walkthrough video</li>
+          <li>Web server add-on</li>
+          <li>Lifetime updates</li>
+        </ul>
+        {buy_button("Get the Kit", "btn-block")}
+      </div>
+      <div class="plan-card">
+        <h3>Live Server Audit</h3>
+        <div class="plan-price">$99 <span>one-time</span></div>
+        <p>A 30-minute screen-share where we review your server together.</p>
+        <ul>
+          <li>Review of SSH, firewall, users &amp; open ports</li>
+          <li>Check for signs of compromise</li>
+          <li>Written report with prioritized fixes</li>
+          <li>Kit included</li>
+        </ul>
+        <a href="{{ROOT}}{AUDIT_BOOKING_URL}" class="btn btn-secondary btn-block">Book an Audit</a>
+      </div>
+      <div class="plan-card">
+        <h3>Done-For-You Hardening</h3>
+        <div class="plan-price">$499 <span>per server</span></div>
+        <p>We harden and verify your server for you, end to end.</p>
+        <ul>
+          <li>Full hardening, tuned to your stack</li>
+          <li>Compromise check before changes</li>
+          <li>Backup &amp; monitoring setup</li>
+          <li>Documentation and handover call</li>
+        </ul>
+        <a href="{{ROOT}}contact.html" class="btn btn-secondary btn-block">Request Done-For-You</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container" style="max-width:820px;">
+    <div class="grid grid-2 kit-trust">
+      <div class="card">
+        <div class="icon">\U0001F468‍\U0001F4BB</div>
+        <h3>Built by a Working Linux Engineer</h3>
+        <p>The kit is written by Mominul Hoque — CKA, RHCE and RHCSA certified, founder of {SITE_NAME} ({LEGAL_NAME}, USA). It packages the same steps used on client servers for hardening, migration and post-hack recovery.</p>
+      </div>
+      <div class="card">
+        <div class="icon">\U0001F4B8</div>
+        <h3>14-Day Money-Back Guarantee</h3>
+        <p>If the kit doesn't work on a supported system or isn't what you expected, email us within 14 days for a full refund. See the <a href="{{ROOT}}refund-policy.html">refund policy</a>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+"""
+
+_kit_faq = faq_block([
+    ("Which systems does it support?", "Ubuntu 22.04, Ubuntu 24.04, and Debian 12 on any VPS or cloud provider where you have root or sudo access. Other distributions aren't supported yet."),
+    ("Could it lock me out of my server?", "That's the most common worry, and the script is built around it: it confirms a working SSH key for your user before disabling passwords, keeps your current session open, and asks before each change. You should still take a snapshot first, as the guide explains."),
+    ("Is it safe to run on a live production server?", "Yes, with a snapshot taken first. The changes are standard hardening settings, and each one is logged with the command to reverse it."),
+    ("Will it work with Docker?", "Yes. The guide covers how Docker interacts with the firewall so published container ports behave the way you expect."),
+    ("Can I use it on client servers?", "Yes. One purchase covers every server you or your company manage, including client servers. Reselling or redistributing the kit itself isn't allowed."),
+    ("Do I get updates?", "Yes. When the kit is updated for new OS releases or improvements, you can download the latest version from your purchase email at no extra cost."),
+    ("How is payment handled?", "Checkout is handled by our payment partner Lemon Squeezy, which acts as the merchant of record and applies any VAT or sales tax for your country. We never see your full card details."),
+    ("What if I need help?", f"Email {EMAIL_DISPLAY} with your question. If you'd like an expert to look at your server directly, the $99 Live Server Audit is the fastest route."),
+])
+
+kit_body += f"""
+<section class="section section--blue">
+  <div class="container" style="max-width:760px;">
+    <div class="section-head"><h2>Frequently Asked Questions</h2></div>
+    {_kit_faq}
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="cta-banner">
+      <h2>Close the Open Doors Before the Bots Find Them</h2>
+      <p>About 20 minutes, one payment, and a server that's no longer an easy target.</p>
+      {buy_button()}
+    </div>
+  </div>
+</section>
+"""
+
+page(
+    "vps-lockdown.html",
+    "VPS Lockdown Kit — Harden Your Linux Server in 20 Minutes",
+    f"A tested hardening script, compromise checklist, and plain-English guide for Ubuntu and Debian VPS servers. One-time {PRODUCT_PRICE}, instant download, 14-day refund.",
+    kit_body,
+    noindex=not PRODUCT_LIVE,
+    extra_head=_LEMON_JS,
+)
+
+# ---- Post-purchase page (set as Lemon Squeezy's redirect URL) --------------
+kit_thanks_body = f"""
+<section class="page-hero">
+  <div class="container text-center">
+    <h1>You're In — Thanks for Your Order</h1>
+    <p style="max-width:600px;margin-left:auto;margin-right:auto;">Your download link is on its way to your email (it usually arrives within a minute — check spam if you don't see it). It also appears on the order confirmation screen.</p>
+  </div>
+</section>
+<section class="section">
+  <div class="container" style="max-width:820px;">
+    <h2 class="text-center">Before You Run the Script</h2>
+    <ul class="checklist">
+      <li>Take a snapshot or backup of your VPS from your provider's panel</li>
+      <li>Confirm you can log in with an SSH key, not just a password</li>
+      <li>Watch the walkthrough video once, start to finish</li>
+      <li>Keep your current SSH session open until you've tested a new login</li>
+    </ul>
+  </div>
+</section>
+<section class="section section--light">
+  <div class="container" style="max-width:820px;">
+    <div class="card">
+      <span class="eyebrow">Optional</span>
+      <h2>Want an Expert to Check Your Server?</h2>
+      <p>Book a 30-minute <strong>Live Server Audit ($99)</strong>. We'll review your SSH, firewall, users, open ports and signs of compromise together on a screen-share, then send you a written report with prioritized fixes.</p>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;">
+        <a href="{{ROOT}}{AUDIT_BOOKING_URL}" class="btn btn-primary btn-lg">Book My Audit</a>
+        <a href="{{ROOT}}contact.html" class="btn btn-secondary btn-lg">Ask About Done-For-You</a>
+      </div>
+    </div>
+    <p class="hint text-center" style="margin-top:22px;">Didn't get your email? Write to {EMAIL_DISPLAY} with your order number.</p>
+  </div>
+</section>
+"""
+page(PRODUCT_THANKS_PAGE, f"Order Confirmed — {SITE_NAME}", "Thanks for buying the VPS Lockdown Kit.", kit_thanks_body, noindex=True)
+
+# --------------------------------------------------------------------------
 # LEGAL PAGES — Terms, Privacy, Cookies
 # --------------------------------------------------------------------------
 # Standard, general-purpose boilerplate written for a remote WordPress
@@ -1848,7 +2201,7 @@ page("contact-thanks.html", f"Request Received — {SITE_NAME}", "Your website r
 # tracking/analytics currently installed). This is a starting draft, not
 # legal advice — have it reviewed by a lawyer familiar with your target
 # markets before relying on it, especially for GDPR/CCPA-style obligations.
-LEGAL_UPDATED = "August 21, 2026"
+LEGAL_UPDATED = "October 11, 2026"
 
 
 def legal_page(filename, title, heading, body_html):
@@ -1915,6 +2268,16 @@ new issues introduced by third-party changes to your site after our work is comp
 or dissatisfaction with design/subjective preferences once the agreed scope has been
 delivered. Contact us to request a refund review.</p>
 
+<h2>5a. Digital Products</h2>
+<p>Digital products sold on this site (such as the VPS Lockdown Kit) are delivered
+as downloadable files. Purchases are processed by our reseller and merchant of record,
+Lemon Squeezy, whose buyer terms also apply to the transaction. Your purchase grants
+you a non-exclusive licence to use the product on servers you own or manage, including
+your clients' servers; you may not resell, share, or redistribute the product files.
+Scripts and guides are provided "as is": you are responsible for taking a backup or
+snapshot before running them and for reviewing changes on your own systems. Refunds
+for digital products are covered by our <a href="{{ROOT}}refund-policy.html">Refund Policy</a>.</p>
+
 <h2>6. Service Limitations</h2>
 <p>WordPress sites depend on many third-party plugins, themes, hosting environments,
 and services outside our control. While we work carefully and test our changes, we
@@ -1972,6 +2335,10 @@ located.</p>
   only to deliver the Service you requested.</li>
   <li><strong>Communications</strong> — records of emails, WhatsApp messages, or other
   correspondence you have with us about a Service.</li>
+  <li><strong>Purchase details</strong> — when you buy a digital product, payment is
+  handled by Lemon Squeezy as merchant of record. We receive your name, email address,
+  country, and order details so we can deliver the product and support you; we never
+  receive your full card details.</li>
 </ul>
 <p>We do not currently use analytics or advertising tracking scripts on this site. See
 our <a href="{{ROOT}}cookies.html">Cookie Policy</a> for details.</p>
@@ -2030,6 +2397,40 @@ reflects the most recent revision.</p>
 """
 legal_page("privacy.html", "Privacy Policy", "Privacy Policy", privacy_body)
 
+# ---- Refund Policy ----------------------------------------------------------
+refund_body = f"""
+<p>This Refund Policy covers digital products sold on {DOMAIN} (such as the VPS
+Lockdown Kit). For one-time services and Care Plans, see the money-back terms in our
+<a href="{{ROOT}}terms.html">Terms of Service</a>.</p>
+
+<h2>1. 14-Day Money-Back Guarantee</h2>
+<p>If a digital product doesn't work on a system it lists as supported, or isn't what
+you expected, you can request a full refund within 14 days of purchase. No lengthy
+justification is needed — a short note on what went wrong helps us improve the product.</p>
+
+<h2>2. How to Request a Refund</h2>
+<p>Email {EMAIL_DISPLAY} from the address you used at checkout and include your order
+number. Refunds are issued through our payment partner Lemon Squeezy to your original
+payment method, normally within 5–10 business days depending on your bank.</p>
+
+<h2>3. When Refunds Aren't Available</h2>
+<ul>
+  <li>Requests made more than 14 days after purchase.</li>
+  <li>Repeated purchases and refunds of the same product, or evidence that the
+  product files have been shared or redistributed.</li>
+</ul>
+
+<h2>4. Payment Processing</h2>
+<p>Orders are processed by Lemon Squeezy, which acts as merchant of record and handles
+payment, sales tax, and VAT. Your card statement may show Lemon Squeezy or a related
+descriptor rather than {SITE_NAME}.</p>
+
+<h2>5. Contact Us</h2>
+<p>Questions about a purchase? Reach us at {EMAIL_DISPLAY} or via
+<a href="{{ROOT}}contact.html">our contact page</a>.</p>
+"""
+legal_page("refund-policy.html", "Refund Policy", "Refund Policy", refund_body)
+
 # ---- Cookie Policy -----------------------------------------------------------
 cookies_body = f"""
 <p>This Cookie Policy explains how {SITE_NAME} uses cookies and similar technologies
@@ -2044,6 +2445,8 @@ information, such as your preferences or login state.</p>
 sets a cookie to remember your consent choices so we don't ask again on every visit.
 Beyond this consent-management cookie, {SITE_NAME} does not currently run analytics,
 advertising, or other third-party tracking cookies.</p>
+<p>If you open the checkout for a digital product, the checkout window is provided by
+Lemon Squeezy, which may set its own cookies needed to process your payment securely.</p>
 
 <h2>3. If This Changes</h2>
 <p>If we add analytics (such as visit statistics) or other tools that use cookies in
