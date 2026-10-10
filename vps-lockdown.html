@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Start cookieyes banner -->
+<script id="cookieyes" type="text/javascript" src="https://cdn-cookieyes.com/client_data/292bc8bb93b9dc1c99121b49c73be720/script.js"></script>
+<!-- End cookieyes banner -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VPS Lockdown Kit — Harden Your Linux Server in 20 Minutes | Micro Service</title>
+<meta name="description" content="A tested hardening script, compromise checklist, and plain-English guide for Ubuntu and Debian VPS servers. One-time $17, instant download, 14-day refund.">
+<link rel="canonical" href="https://mspointbd.com/vps-lockdown.html">
+<meta name="robots" content="noindex,follow">
+<!-- Open Graph (Facebook, WhatsApp, LinkedIn) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Micro Service">
+<meta property="og:title" content="VPS Lockdown Kit — Harden Your Linux Server in 20 Minutes | Micro Service">
+<meta property="og:description" content="A tested hardening script, compromise checklist, and plain-English guide for Ubuntu and Debian VPS servers. One-time $17, instant download, 14-day refund.">
+<meta property="og:url" content="https://mspointbd.com/vps-lockdown.html">
+<meta property="og:image" content="https://mspointbd.com/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<!-- Twitter/X Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="VPS Lockdown Kit — Harden Your Linux Server in 20 Minutes | Micro Service">
+<meta name="twitter:description" content="A tested hardening script, compromise checklist, and plain-English guide for Ubuntu and Debian VPS servers. One-time $17, instant download, 14-day refund.">
+<meta name="twitter:image" content="https://mspointbd.com/assets/og-image.png">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="assets/favicon.ico" sizes="any">
+<link rel="icon" href="assets/favicon-48.png" type="image/png" sizes="48x48">
+<link rel="icon" href="assets/favicon-96.png" type="image/png" sizes="96x96">
+<link rel="icon" href="assets/favicon-144.png" type="image/png" sizes="144x144">
+<link rel="apple-touch-icon" href="assets/favicon-180.png">
+</head>
+<body>
+<header class="site-header">
+  <div class="container nav-bar">
+    <a href="index.html" class="logo logo--image"><img src="assets/logo-microservice.png" alt="Micro Service" width="838" height="240"></a>
+    <nav class="nav-links" id="nav-links">
+      <a href="index.html" class="">Home</a><div class="has-dropdown"><a href="services.html" class="active">Services ▾</a><div class="dropdown mega-menu"><div class="mega-col"><div class="mega-col-head">Fix &amp; Optimize</div><a href="services-website-repair-small-fixes.html" class="mega-item"><span class="mega-label">Website Repair & Small Fixes</span></a><a href="services-malware-removal-security-hardening.html" class="mega-item"><span class="mega-label">Malware Removal & Security Hardening</span></a><a href="services-speed-optimization.html" class="mega-item"><span class="mega-label">Speed Optimization</span></a><a href="services-migration.html" class="mega-item"><span class="mega-label">Migration</span></a></div><div class="mega-col"><div class="mega-col-head">Build &amp; Scale</div><a href="services-redesign-development.html" class="mega-item"><span class="mega-label">Redesign & Development</span></a><a href="services-infrastructure-devops.html" class="mega-item"><span class="mega-label">Infrastructure & DevOps</span></a><a href="services-saas-systems-integration.html" class="mega-item"><span class="mega-label">SaaS & Systems Integration</span></a><a href="services-ai-development-integration.html" class="mega-item"><span class="mega-label">AI Development & Integration</span></a></div></div></div><a href="care-plans.html" class="">Care Plans</a><a href="about.html" class="">About</a><a href="contact.html" class="">Contact</a>
+    </nav>
+    <div class="nav-cta">
+      <div class="has-dropdown currency-menu">
+        <a href="contact.html" class="currency-toggle" aria-haspopup="true"><svg viewBox="0 0 20 14" width="18" height="13"><rect width="20" height="14" fill="#fff"/><g fill="#B22234"><rect width="20" height="1.08"/><rect width="20" height="1.08" y="2.15"/><rect width="20" height="1.08" y="4.3"/><rect width="20" height="1.08" y="6.46"/><rect width="20" height="1.08" y="8.6"/><rect width="20" height="1.08" y="10.75"/><rect width="20" height="1.08" y="12.9"/></g><rect width="8" height="7.5" fill="#3C3B6E"/></svg> USD <span class="chevron">▾</span></a>
+        <div class="dropdown currency-dropdown">
+          <a href="contact.html"><svg viewBox="0 0 20 14" width="18" height="13"><rect width="20" height="14" fill="#003399"/><g fill="#FFCC00"><circle cx="10" cy="3" r="0.7"/><circle cx="13" cy="4" r="0.7"/><circle cx="14.3" cy="7" r="0.7"/><circle cx="13" cy="10" r="0.7"/><circle cx="10" cy="11" r="0.7"/><circle cx="7" cy="10" r="0.7"/><circle cx="5.7" cy="7" r="0.7"/><circle cx="7" cy="4" r="0.7"/></g></svg> EUR</a>
+          <a href="contact.html"><svg viewBox="0 0 20 14" width="18" height="13"><rect width="20" height="14" fill="#00247D"/><g stroke="#fff" stroke-width="2.4"><line x1="0" y1="0" x2="20" y2="14"/><line x1="20" y1="0" x2="0" y2="14"/></g><g stroke="#CF142B" stroke-width="1.2"><line x1="0" y1="0" x2="20" y2="14"/><line x1="20" y1="0" x2="0" y2="14"/></g><rect x="8" width="4" height="14" fill="#fff"/><rect y="5" width="20" height="4" fill="#fff"/><rect x="8.8" width="2.4" height="14" fill="#CF142B"/><rect y="5.8" width="20" height="2.4" fill="#CF142B"/></svg> GBP</a>
+          <a href="contact.html"><svg viewBox="0 0 20 14" width="18" height="13"><rect width="20" height="14" fill="#fff"/><rect width="5" height="14" fill="#D80621"/><rect x="15" width="5" height="14" fill="#D80621"/><path d="M10 3 L10.8 5 L12.5 4.3 L11.8 6 L13.5 6.5 L11.8 7.3 L12.3 9 L10.5 8.2 L10 10 L9.5 8.2 L7.7 9 L8.2 7.3 L6.5 6.5 L8.2 6 L7.5 4.3 L9.2 5 Z" fill="#D80621"/></svg> CAD</a>
+          <a href="contact.html"><svg viewBox="0 0 20 14" width="18" height="13"><rect width="20" height="14" fill="#00247D"/><g stroke="#fff" stroke-width="1"><line x1="0" y1="0" x2="10" y2="7"/><line x1="10" y1="0" x2="0" y2="7"/></g><rect x="4" width="2" height="7" fill="#fff"/><rect y="3" width="10" height="1" fill="#fff"/><rect x="4.4" width="1.2" height="7" fill="#CF142B"/><rect y="3.3" width="10" height="0.4" fill="#CF142B"/><g fill="#fff"><circle cx="15" cy="3" r="0.6"/><circle cx="17" cy="6" r="0.6"/><circle cx="14.5" cy="9" r="0.6"/><circle cx="17.5" cy="10.5" r="0.6"/><circle cx="12.5" cy="6.5" r="0.5"/></g></svg> AUD</a>
+        </div>
+      </div>
+      <a href="contact.html" class="btn btn-primary">Get Free Quote</a>
+      <button type="button" class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="nav-links" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div>
+        <span class="eyebrow" style="background:rgba(255,255,255,0.14);color:#ffe1ad;">Digital Toolkit · Launching Soon</span>
+        <h1>Lock Down Your Linux VPS in 20 Minutes</h1>
+        <p class="lead">A tested hardening script, an "Am I already compromised?" checklist, and a plain-English guide — built from real server cleanup and hardening jobs, for people who run their own VPS without a DevOps team.</p>
+        <p class="lead" style="font-size:0.95rem;color:#b9cfe6;">Ubuntu 22.04 / 24.04 &amp; Debian 12 · One-time payment of $17 · Instant download · 14-day refund</p>
+        <div class="hero-cta">
+          <a href="contact.html" class="btn btn-primary btn-lg">Get Notified at Launch</a>
+          <a href="#inside" class="btn btn-outline btn-lg">See What's Inside</a>
+        </div>
+      </div>
+      <div class="hero-art">
+        <div class="terminal" aria-hidden="true">
+  <div class="terminal-bar"><span></span><span></span><span></span><em>root@vps: ~</em></div>
+  <pre><span class="t-dim">$</span> sudo ./lockdown.sh
+<span class="t-ok">[✓]</span> SSH key found for current user
+<span class="t-ok">[✓]</span> Password &amp; root login disabled
+<span class="t-ok">[✓]</span> Firewall: deny incoming, allow 22/80/443
+<span class="t-ok">[✓]</span> fail2ban active on sshd
+<span class="t-ok">[✓]</span> Automatic security updates on
+<span class="t-ok">[✓]</span> Kernel/network hardening applied
+<span class="t-warn">[!]</span> 2 services listening publicly — review
+<span class="t-dim">Report saved: lockdown-report.txt</span></pre>
+</div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="hero-badges"><div class="container"><span>Safe for Live Servers</span><span>No Subscription</span><span>Lifetime Updates</span><span>Built by a Certified Linux Engineer</span></div></div>
+
+<section class="section">
+  <div class="container" style="max-width:820px;">
+    <div class="section-head">
+      <span class="eyebrow">The Problem</span>
+      <h2>Most VPS Break-Ins Aren't Sophisticated</h2>
+      <p>Bots scan every public IP on the internet around the clock. They don't need a clever exploit — they look for the same handful of open doors on every fresh server.</p>
+    </div>
+    <ul class="problem-list grid grid-2">
+      <li>SSH open to the world with password login</li>
+      <li>Root allowed to log in directly</li>
+      <li>No firewall, or every port left open</li>
+      <li>Security patches not applied for months</li>
+      <li>Nothing blocking repeated failed logins</li>
+      <li>Nobody watching for unknown processes or cron jobs</li>
+    </ul>
+    <p style="margin-top:22px;">We've cleaned up servers that were quietly mining cryptocurrency for someone else and mail servers hit by ransomware. The cleanup takes days. Closing the common entry points takes minutes — that's what this kit is for.</p>
+  </div>
+</section>
+
+<section class="section section--light" id="inside">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">What's Inside</span>
+      <h2>Everything You Need to Harden and Check Your Server</h2>
+      <p>Download once, use on every server you manage.</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="card"><div class="icon">🛡️</div><h3>lockdown.sh</h3><p>One script that applies the essentials: SSH key-only login, root login off, UFW firewall, fail2ban, automatic security updates, and kernel/network hardening. It checks for a working SSH key before touching SSH, and asks before each step.</p></div>
+      <div class="card"><div class="icon">🔍</div><h3>"Am I Compromised?" Checklist</h3><p>Step-by-step commands to look for the signs we find on real hacked servers: unknown processes, CPU spikes, suspicious cron jobs, rogue <code>authorized_keys</code> entries, and new users.</p></div>
+      <div class="card"><div class="icon">📘</div><h3>Plain-English PDF Guide</h3><p>What every change does, why it matters, and how to undo it. Written so a developer or site owner can follow it without a sysadmin background.</p></div>
+      <div class="card"><div class="icon">🌐</div><h3>Web Server Add-On</h3><p>Extra hardening notes for servers running WordPress, PHP-FPM, and Nginx — file permissions, PHP settings, and locking down admin areas.</p></div>
+      <div class="card"><div class="icon">🎬</div><h3>Walkthrough Video</h3><p>A screen-recorded run on a fresh VPS, start to finish, so you know exactly what to expect before running it on yours.</p></div>
+      <div class="card"><div class="icon">↩️</div><h3>Rollback Notes</h3><p>Each change is logged to a report file, with the exact commands to reverse it if something on your server needs a different setting.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <h2>How It Works</h2>
+      <p>Three steps. About 20 minutes on a typical VPS.</p>
+    </div>
+    <div class="grid grid-3 steps"><div class="step"><div class="step-num">1</div><h3>Snapshot</h3><p>Take a snapshot or backup of your VPS from your provider's panel, and confirm you can log in with an SSH key. The guide shows how.</p></div><div class="step"><div class="step-num">2</div><h3>Run</h3><p>Upload the kit and run <code>lockdown.sh</code>. It explains each change and asks before applying it, so nothing happens behind your back.</p></div><div class="step"><div class="step-num">3</div><h3>Verify</h3><p>Work through the compromise checklist and review the saved report. Anything that needs attention is flagged clearly.</p></div></div>
+  </div>
+</section>
+<section class="section section--light">
+  <div class="container">
+    <div class="grid grid-2">
+      <div class="card">
+        <h3>This Kit Is for You If…</h3>
+        <ul class="checklist">
+          <li>You run your own VPS on DigitalOcean, Hetzner, OVH, Linode, Vultr, AWS Lightsail or similar</li>
+          <li>You host websites, apps, or APIs and don't have a DevOps team</li>
+          <li>You're comfortable running commands over SSH</li>
+          <li>You want a fresh server secured properly from day one</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>It's Not the Right Fit If…</h3>
+        <ul class="problem-list">
+          <li>You're on shared hosting with no root access</li>
+          <li>Your server is managed through cPanel/Plesk with its own firewall (the guide explains what to skip, but a review is safer)</li>
+          <li>Your server is already showing signs of a hack — that needs a cleanup first</li>
+        </ul>
+        <p style="margin-bottom:0;">Already hacked? <a href="services-malware-removal-security-hardening.html">Our malware removal service</a> handles the cleanup.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <h2>From Our Server Hardening Clients</h2>
+      <p>Reviews from real Fiverr orders for the hands-on work this kit is built on.</p>
+    </div>
+    <div class="grid grid-2">
+      <div class="testimonial">
+        <div class="stars">★★★★★</div>
+        <p>"I hired Muhammad Mominul Hoque for server hardening on my Linux web server, and the work was done perfectly, my server is now much more secure with zero critical vulnerabilities remaining. They showed outstanding code expertise in implementing best practices like firewall rules, fail2ban, SSH key authentication, and custom scripts; maintained high professionalism with detailed reports, testing, and clear documentation;"</p>
+        <div class="who">— Manzarhasan on Fiverr, United States</div>
+      </div>
+      <div class="testimonial">
+        <div class="stars">★★★★★</div>
+        <p>"Fantastic experience. He secured my VPS, installed Coolify, and made sure everything was set up correctly. Very proactive, knowledgeable, and easy to work with. Delivered exactly what I needed and exceeded expectations. Highly recommended!"</p>
+        <div class="who">— Usamaibrahim on Fiverr, United Kingdom</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section--light" id="pricing">
+  <div class="container">
+    <div class="section-head">
+      <h2>Do It Yourself, or Let Us Do It</h2>
+      <p>Start with the kit. If you'd rather have an expert check or do the work, there's an option for that too.</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="plan-card popular">
+        <span class="plan-badge">Most Popular</span>
+        <h3>VPS Lockdown Kit</h3>
+        <div class="plan-price">$17 <span>one-time</span></div>
+        <p>Do it yourself in about 20 minutes.</p>
+        <ul>
+          <li>lockdown.sh hardening script</li>
+          <li>"Am I Compromised?" checklist</li>
+          <li>PDF guide + walkthrough video</li>
+          <li>Web server add-on</li>
+          <li>Lifetime updates</li>
+        </ul>
+        <a href="contact.html" class="btn btn-primary btn-block">Get Notified at Launch</a>
+      </div>
+      <div class="plan-card">
+        <h3>Live Server Audit</h3>
+        <div class="plan-price">$99 <span>one-time</span></div>
+        <p>A 30-minute screen-share where we review your server together.</p>
+        <ul>
+          <li>Review of SSH, firewall, users &amp; open ports</li>
+          <li>Check for signs of compromise</li>
+          <li>Written report with prioritized fixes</li>
+          <li>Kit included</li>
+        </ul>
+        <a href="contact.html" class="btn btn-secondary btn-block">Book an Audit</a>
+      </div>
+      <div class="plan-card">
+        <h3>Done-For-You Hardening</h3>
+        <div class="plan-price">$499 <span>per server</span></div>
+        <p>We harden and verify your server for you, end to end.</p>
+        <ul>
+          <li>Full hardening, tuned to your stack</li>
+          <li>Compromise check before changes</li>
+          <li>Backup &amp; monitoring setup</li>
+          <li>Documentation and handover call</li>
+        </ul>
+        <a href="contact.html" class="btn btn-secondary btn-block">Request Done-For-You</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container" style="max-width:820px;">
+    <div class="grid grid-2 kit-trust">
+      <div class="card">
+        <div class="icon">👨‍💻</div>
+        <h3>Built by a Working Linux Engineer</h3>
+        <p>The kit is written by Mominul Hoque — CKA, RHCE and RHCSA certified, founder of Micro Service (MSPoint LLC, USA). It packages the same steps used on client servers for hardening, migration and post-hack recovery.</p>
+      </div>
+      <div class="card">
+        <div class="icon">💸</div>
+        <h3>14-Day Money-Back Guarantee</h3>
+        <p>If the kit doesn't work on a supported system or isn't what you expected, email us within 14 days for a full refund. See the <a href="refund-policy.html">refund policy</a>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section--blue">
+  <div class="container" style="max-width:760px;">
+    <div class="section-head"><h2>Frequently Asked Questions</h2></div>
+    <div class="faq-list"><details class="faq-item"><summary>Which systems does it support?</summary><div class="faq-a">Ubuntu 22.04, Ubuntu 24.04, and Debian 12 on any VPS or cloud provider where you have root or sudo access. Other distributions aren't supported yet.</div></details><details class="faq-item"><summary>Could it lock me out of my server?</summary><div class="faq-a">That's the most common worry, and the script is built around it: it confirms a working SSH key for your user before disabling passwords, keeps your current session open, and asks before each change. You should still take a snapshot first, as the guide explains.</div></details><details class="faq-item"><summary>Is it safe to run on a live production server?</summary><div class="faq-a">Yes, with a snapshot taken first. The changes are standard hardening settings, and each one is logged with the command to reverse it.</div></details><details class="faq-item"><summary>Will it work with Docker?</summary><div class="faq-a">Yes. The guide covers how Docker interacts with the firewall so published container ports behave the way you expect.</div></details><details class="faq-item"><summary>Can I use it on client servers?</summary><div class="faq-a">Yes. One purchase covers every server you or your company manage, including client servers. Reselling or redistributing the kit itself isn't allowed.</div></details><details class="faq-item"><summary>Do I get updates?</summary><div class="faq-a">Yes. When the kit is updated for new OS releases or improvements, you can download the latest version from your purchase email at no extra cost.</div></details><details class="faq-item"><summary>How is payment handled?</summary><div class="faq-a">Checkout is handled by our payment partner Lemon Squeezy, which acts as the merchant of record and applies any VAT or sales tax for your country. We never see your full card details.</div></details><details class="faq-item"><summary>What if I need help?</summary><div class="faq-a">Email support@mspointbd.com with your question. If you'd like an expert to look at your server directly, the $99 Live Server Audit is the fastest route.</div></details></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="cta-banner">
+      <h2>Close the Open Doors Before the Bots Find Them</h2>
+      <p>About 20 minutes, one payment, and a server that's no longer an easy target.</p>
+      <a href="contact.html" class="btn btn-primary btn-lg">Get Notified at Launch</a>
+    </div>
+  </div>
+</section>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo logo--image"><img src="assets/logo-microservice.png" alt="Micro Service" width="838" height="240"></div>
+        <p>Website repair, security, infrastructure, integrations, and AI development for businesses worldwide. Fixes from $80. No long-term contracts required.</p>
+      </div>
+      <div>
+        <h4>Services</h4>
+        <ul>
+          <li><a href="services-website-repair-small-fixes.html">Website Repair &amp; Small Fixes</a></li>
+          <li><a href="services-malware-removal-security-hardening.html">Malware Removal &amp; Security</a></li>
+          <li><a href="services-speed-optimization.html">Speed Optimization</a></li>
+          <li><a href="services-migration.html">Migration</a></li>
+          <li><a href="services-redesign-development.html">Redesign &amp; Development</a></li>
+          <li><a href="services-infrastructure-devops.html">Infrastructure &amp; DevOps</a></li>
+          <li><a href="services-saas-systems-integration.html">SaaS &amp; Systems Integration</a></li>
+          <li><a href="services-ai-development-integration.html">AI Development &amp; Integration</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Plans &amp; Hosting</h4>
+        <ul>
+          <li><a href="care-plans.html">Care Plans</a></li>
+          <li><a href="maintenance-plan.html">Maintenance Plan</a></li>
+          <li><a href="care-plans.html">Security Plan</a></li>
+          <li><a href="care-plans.html">Performance Plan</a></li>
+          <li><a href="about.html">About Us</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Support Hours</h4>
+        <ul>
+          <li>Open 24/7 — every day of the week, no days off.</li>
+          <li>Most repairs completed within 24 hours; urgent requests handled same day.</li>
+          <li>✉️ support@mspointbd.com</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Pay With</h4>
+        <div class="pay-icons">
+          
+<span class="pay-badge pay-badge--ssl" aria-label="SSL Secured">
+  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+  SSL SECURED
+</span>
+<span class="pay-badge pay-badge--stripe" aria-label="Powered by Stripe"><span class="pb-of">Powered by</span> <strong>stripe</strong></span>
+<span class="pay-badge" style="background:#1a1f71;">VISA</span>
+<span class="pay-badge pay-badge--mc" aria-label="Mastercard"><span class="mc-circle mc-red"></span><span class="mc-circle mc-yellow"></span></span>
+<span class="pay-badge" style="background:#2557d6;">AMEX</span>
+<span class="pay-badge pay-badge--pp" aria-label="PayPal"><span class="pp-pay">Pay</span><span class="pp-pal">Pal</span></span>
+
+        </div>
+        <h4 style="margin-top:22px;">Social Links</h4>
+        <div class="social-links">
+          <a href="https://www.facebook.com/mamungtg/" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06C2 17.06 5.66 21.2 10.44 22v-7.03H7.9v-2.91h2.54V9.85c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.78l-.44 2.91h-2.34V22C18.34 21.2 22 17.06 22 12.06z"/></svg></a>
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r="1.1" fill="currentColor" stroke="none"/></svg></a>
+          <a href="https://www.linkedin.com/in/mdmhoque/" target="_blank" rel="noopener" aria-label="LinkedIn"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M4.98 3.5C4.98 4.88 3.9 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5zM.4 8.4h4.1V23H.4V8.4zM8.3 8.4h3.9v2h.1c.55-1 1.9-2.1 3.9-2.1 4.2 0 5 2.8 5 6.3V23h-4.1v-6.6c0-1.6 0-3.6-2.2-3.6-2.2 0-2.5 1.7-2.5 3.5V23H8.3V8.4z"/></svg></a>
+          <a href="#" aria-label="X"><svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M18.24 3H21l-6.55 7.49L22.2 21h-6.1l-4.78-6.24L5.8 21H3l7-8L2.6 3h6.25l4.32 5.72L18.24 3zm-1.07 16.17h1.68L7.9 4.74H6.1l11.07 14.43z"/></svg></a>
+          <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor"><path d="M23 12s0-3.5-.45-5.17a2.78 2.78 0 0 0-1.96-1.97C18.88 4.4 12 4.4 12 4.4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.95 1.97C1 8.5 1 12 1 12s0 3.5.45 5.17a2.78 2.78 0 0 0 1.95 1.97c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.95-1.97C23 15.5 23 12 23 12zM9.75 15.3V8.7l5.75 3.3-5.75 3.3z"/></svg></a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© Micro Service — mspointbd.com. All rights reserved.</span>
+      <span class="footer-legal-entity">© MSPoint LLC | USA | Reg. No. 2026-002065237</span>
+      <div class="footer-legal">
+        <a href="terms.html">Terms</a><a href="privacy.html">Privacy</a><a href="refund-policy.html">Refunds</a><a href="cookies.html">Cookies</a>
+      </div>
+    </div>
+  </div>
+</footer>
+<div class="float-widgets">
+  <a class="float-card" href="https://www.fiverr.com/mdmominulhoque" target="_blank" rel="noopener">
+    <img class="float-fiverr-logo" src="assets/fiverr-logo.png" alt="Fiverr" width="64" height="64">
+    <span class="float-label">Hire Me on Fiverr</span>
+  </a>
+</div>
+<!-- CookieYes "revisit consent" trigger — the cky-banner-element class is
+     CookieYes's documented hook: their script binds a click handler to any
+     element with this class to reopen the preferences panel. -->
+<button type="button" class="cky-banner-element cookie-revisit-btn" id="cookie-revisit-btn" aria-label="Cookie Settings" title="Cookie Settings">🍪</button>
+<script src="js/main.js" defer></script>
+<script src="https://chat.mspointbd.com/widget.js" defer></script>
+</body>
+</html>
